@@ -54,7 +54,7 @@ payload:
   - DOMAIN-SUFFIX,bbci.co.uk
   - DOMAIN-SUFFIX,bellingcat.com
   - DOMAIN-SUFFIX,belsat.eu
-  - DOMAIN-SUFFIX,belsat.pl 
+  - DOMAIN-SUFFIX,belsat.pl
   - DOMAIN-SUFFIX,bereg.io
   - DOMAIN-SUFFIX,bergfreunde.eu
   - DOMAIN-SUFFIX,berlingske.dk
@@ -178,6 +178,7 @@ payload:
   - DOMAIN-SUFFIX,forumfreerussia.org
   - DOMAIN-SUFFIX,foxitsoftware.com
   - DOMAIN-SUFFIX,freemedia.io
+  - DOMAIN-SUFFIX,freemedia.tech
   - DOMAIN-SUFFIX,freepng.ru
   - DOMAIN-SUFFIX,furaffinity.net
   - DOMAIN-SUFFIX,gagadget.com
@@ -205,7 +206,7 @@ payload:
   - DOMAIN-SUFFIX,googleusercontent.com
   - DOMAIN-SUFFIX,googlevideo.com
   - DOMAIN-SUFFIX,gvt1.com 
-  - DOMAIN-SUFFIX,grani.ru 
+  - DOMAIN-SUFFIX,grani.ru
   - DOMAIN-SUFFIX,graty.me
   - DOMAIN-SUFFIX,greenmangaming.com
   - DOMAIN-SUFFIX,grok.com
