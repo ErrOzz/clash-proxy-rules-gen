@@ -158,7 +158,7 @@ payload:
   - DOMAIN-SUFFIX,euronews.com
   - DOMAIN-SUFFIX,euroradio.fm
   - DOMAIN-SUFFIX,eutrp.eu
-  - DOMAIN-SUFFIX,exler.ru
+  - DOMAIN-SUFFIX,exler.ru 
   - DOMAIN-SUFFIX,expres.online
   - DOMAIN-SUFFIX,expressionengine.com
   - DOMAIN-SUFFIX,expresso.pt
@@ -246,7 +246,7 @@ payload:
   - DOMAIN-SUFFIX,jut.su
   - DOMAIN-SUFFIX,kaleido.ai
   - DOMAIN-SUFFIX,kara.su
-  - DOMAIN-SUFFIX,kasparov.ru
+  - DOMAIN-SUFFIX,kasparov.ru 
   - DOMAIN-SUFFIX,kavkaz-uzel.eu
   - DOMAIN-SUFFIX,kavkazr.com
   - DOMAIN-SUFFIX,kinogo.biz
@@ -262,7 +262,7 @@ payload:
   - DOMAIN-SUFFIX,lastampa.it
   - DOMAIN-SUFFIX,lantern.io
   - DOMAIN-SUFFIX,lemonde.fr
-  - DOMAIN-SUFFIX,lentachel.ru 
+  - DOMAIN-SUFFIX,lentachel.ru
   - DOMAIN-SUFFIX,leonidvolkov.ru
   - DOMAIN-SUFFIX,levif.be
   - DOMAIN-SUFFIX,lexpress.fr
@@ -363,7 +363,7 @@ payload:
   - DOMAIN-SUFFIX,ozi-ru.org
   - DOMAIN-SUFFIX,ozodi.org
   - DOMAIN-SUFFIX,pap.pl
-  - DOMAIN-SUFFIX,paperpaper.ru
+  - DOMAIN-SUFFIX,paperpaper.ru 
   - DOMAIN-SUFFIX,paperpaper.io
   - DOMAIN-SUFFIX,patreon.com
   - DOMAIN-SUFFIX,pcgamesn.com
@@ -375,7 +375,7 @@ payload:
   - DOMAIN-SUFFIX,politico.eu
   - DOMAIN-SUFFIX,politiken.dk
   - DOMAIN-SUFFIX,politis.com.cy
-  - DOMAIN-SUFFIX,politzek.org
+  - DOMAIN-SUFFIX,politzek.org 
   - DOMAIN-SUFFIX,pornolab.net
   - DOMAIN-SUFFIX,posle.media
   - DOMAIN-SUFFIX,postimees.ee
@@ -404,7 +404,7 @@ payload:
   - DOMAIN-SUFFIX,remove.bg
   - DOMAIN-SUFFIX,rentry.co
   - DOMAIN-SUFFIX,repubblica.it
-  - DOMAIN-SUFFIX,republic.ru
+  - DOMAIN-SUFFIX,republic.ru 
   - DOMAIN-SUFFIX,resistancetheatre.org
   - DOMAIN-SUFFIX,rezka.ag
   - DOMAIN-SUFFIX,rezonans.media 
@@ -490,7 +490,7 @@ payload:
   - DOMAIN-SUFFIX,tidal.com
   - DOMAIN-SUFFIX,timesofmalta.com
   - DOMAIN-SUFFIX,tjournal.ru
-  - DOMAIN-SUFFIX,top-fon.com 
+  - DOMAIN-SUFFIX,top-fon.com
   - DOMAIN-SUFFIX,torrentgalaxy.to 
   - DOMAIN-SUFFIX,torproject.org
   - DOMAIN-SUFFIX,trace.moe
@@ -525,6 +525,10 @@ payload:
   - DOMAIN-SUFFIX,wdfiles.com
   - DOMAIN-SUFFIX,weather.com
   - DOMAIN-SUFFIX,welt.de
+  - DOMAIN-SUFFIX,wa.me
+  - DOMAIN-SUFFIX,whatsapp.com
+  - DOMAIN-SUFFIX,whatsapp.net
+  - DOMAIN-SUFFIX,whatsapp.org
   - DOMAIN-SUFFIX,wikidot.com
   - DOMAIN-SUFFIX,willytel.de
   - DOMAIN-SUFFIX,windscribe.com
@@ -543,7 +547,7 @@ payload:
   - DOMAIN-SUFFIX,yummyanime.org
   - DOMAIN-SUFFIX,zahav.ru
   - DOMAIN-SUFFIX,zaodno.org
-  - DOMAIN-SUFFIX,zeflix.online
+  - DOMAIN-SUFFIX,zeflix.online 
   - DOMAIN-SUFFIX,zeit.de
   - DOMAIN-SUFFIX,zelenka.guru
   - DOMAIN-SUFFIX,zerkalo.io
