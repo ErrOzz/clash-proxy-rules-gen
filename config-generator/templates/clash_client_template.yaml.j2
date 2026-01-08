@@ -37,14 +37,15 @@ proxies:
 proxy-groups:
   # 1. Automatic Selection: Checks ping and selects the fastest server
   - name: ♻️ Automatic
-    type: url-test
+    type: fallback
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
-    tolerance: 50
     proxies:
       {% for proxy in all_proxies -%}
       - {{ proxy.name }}
-      {% endfor %}
+      {% endfor -%}
+      - DIRECT
+
   # 2. Main Proxy Selector: Choose between Auto or specific server manually
   - name: 🚀 PROXY
     type: select
