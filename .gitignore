@@ -10,3 +10,7 @@ config-generator/generated_configs/
 # ignore virtual environment folders
 .venv/
 venv/
+
+# ignore Python cache files
+__pycache__/
+*.pyc

@@ -3,8 +3,9 @@ import json
 import yaml
 import secrets
 import random
-import subprocess
-import re
+import base64
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import x25519
 from dotenv import load_dotenv
 
 # Import our internal modules
@@ -15,54 +16,36 @@ import sync_configs  # Trigger Gist update
 load_dotenv()
 
 INBOUND_ID = int(os.getenv("INBOUND_ID", 1))
-DOCKER_CONTAINER_NAME = os.getenv("DOCKER_CONTAINER_NAME", "3x-ui")
 
 def generate_x25519_keys():
     """
-    Generates X25519 keys by executing the Xray binary inside the Docker container.
-    Adapts to the specific output format of the user's binary (PrivateKey/Password).
+    Generates X25519 keys using Python 'cryptography'.
+    Uses URL-Safe Base64 encoding to be compatible with Xray/Panel.
     """
-    # The path found via docker top
-    xray_path = "/app/bin/xray-linux-amd64"
+    # 1. Generate Private Key
+    private_key_obj = x25519.X25519PrivateKey.generate()
     
-    # Command: docker exec <container> <path_to_xray> x25519
-    cmd = ["docker", "exec", DOCKER_CONTAINER_NAME, xray_path, "x25519"]
+    # 2. Derive Public Key
+    public_key_obj = private_key_obj.public_key()
     
-    try:
-        # Run command and capture output
-        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode('utf-8')
-        
-        # DEBUG: Uncomment the line below if regex fails again
-        # print(f"🔍 DEBUG: Raw Xray Output:\n{output}")
-
-        # Parse output using Regex adapted for this binary version:
-        # Expected format:
-        # PrivateKey: <key>
-        # Password: <key>   <-- This is actually the Public Key in this version
-        priv_match = re.search(r"PrivateKey:\s*(\S+)", output)
-        pub_match = re.search(r"Password:\s*(\S+)", output)
-        
-        if not priv_match or not pub_match:
-            # Fallback check for standard format just in case
-            priv_match_std = re.search(r"Private Key:\s*(\S+)", output)
-            pub_match_std = re.search(r"Public Key:\s*(\S+)", output)
-            
-            if priv_match_std and pub_match_std:
-                priv_match, pub_match = priv_match_std, pub_match_std
-            else:
-                raise ValueError(f"Could not parse Xray output. Raw output:\n{output}")
-            
-        private_key = priv_match.group(1).strip()
-        public_key = pub_match.group(1).strip()
-        
-        return private_key, public_key
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Docker execution failed: {e.output.decode('utf-8')}")
-        raise
-    except Exception as e:
-        print(f"❌ Error generating keys via Docker: {e}")
-        raise
+    # 3. Get raw bytes
+    private_bytes = private_key_obj.private_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PrivateFormat.Raw,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+    
+    public_bytes = public_key_obj.public_bytes(
+        encoding=serialization.Encoding.Raw,
+        format=serialization.PublicFormat.Raw
+    )
+    
+    # 4. Encode URL-SAFE and strip padding
+    # This replaces '+' with '-' and '/' with '_'
+    private_b64 = base64.urlsafe_b64encode(private_bytes).decode('utf-8').rstrip('=')
+    public_b64 = base64.urlsafe_b64encode(public_bytes).decode('utf-8').rstrip('=')
+    
+    return private_b64, public_b64
 
 def generate_short_ids(count=4):
     """
@@ -85,7 +68,7 @@ def load_rotation_domains():
         return yaml.safe_load(f)
 
 def rotate():
-    print("🔄 Starting Reality rotation process (via Docker Xray)...")
+    print("🔄 Starting Reality rotation process...")
 
     # 1. Authenticate
     session = get_panel_session()
@@ -120,24 +103,23 @@ def rotate():
         print("❌ No domains loaded. Aborting.")
         return
         
-    available_domains = [d for d in domains if d != current_main_sni]
+    current_root = current_main_sni.replace("www.", "")
+    available_domains = [d for d in domains if d.replace("www.", "") != current_root]
     
     if not available_domains:
         print("⚠️ Only current domain available. Rotating keys only.")
         root_domain = current_main_sni or domains[0]
     else:
         root_domain = random.choice(available_domains)
+        root_domain = root_domain.replace("www.", "")
 
     # B. Generate SNI List & Dest
     new_snis = [root_domain, f"www.{root_domain}"]
     new_dest = f"{root_domain}:443"
 
-    # C. Generate New Keys (Docker Exec)
-    try:
-        new_private_key, new_public_key = generate_x25519_keys()
-    except Exception:
-        return # Stop if key gen failed
-
+    # C. Generate New Keys (Python + URLSafe)
+    new_private_key, new_public_key = generate_x25519_keys()
+    
     # D. Generate New ShortIds
     new_short_ids = generate_short_ids(4)
 
@@ -149,16 +131,20 @@ def rotate():
     
     reality_settings['serverNames'] = new_snis
     reality_settings['shortIds'] = new_short_ids
-    
-    # MHSanaei target/dest fix
     reality_settings['target'] = new_dest
+    reality_settings['dest'] = new_dest
     
-    # Update Keys
+    # --- KEY UPDATE FIX ---
+    # Ensure 'settings' exists for publicKey
     if 'settings' not in reality_settings:
         reality_settings['settings'] = {}
         
+    # Public Key goes into nested 'settings'
     reality_settings['settings']['publicKey'] = new_public_key
-    reality_settings['settings']['privateKey'] = new_private_key
+    
+    # Private Key goes into ROOT of 'realitySettings' (Typical for MHSanaei)
+    reality_settings['privateKey'] = new_private_key
+    # ----------------------
     
     # Pack back
     stream_settings['realitySettings'] = reality_settings
