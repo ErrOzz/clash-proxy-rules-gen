@@ -5,14 +5,15 @@ import requests
 from jinja2 import Environment, FileSystemLoader
 from dotenv import load_dotenv
 
+# Import API functions from our new module
+from panel_api import get_panel_session, get_inbound_data
+
 # Load environment variables
 load_dotenv()
 
 # --- Configuration ---
-PANEL_URL = os.getenv("PANEL_URL")
-USERNAME = os.getenv("PANEL_USERNAME")
-PASSWORD = os.getenv("PANEL_PASSWORD")
-INBOUND_ID = int(os.getenv("INBOUND_ID", 1))
+# Note: Panel credentials are now handled inside panel_api.py, 
+# but we still need these variables here for logic or Gist.
 GIST_ID = os.getenv("GIST_ID")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 SERVER_HOST = os.getenv("SERVER_HOST")
@@ -47,50 +48,10 @@ def strip_comments(text):
         
     return '\n'.join(cleaned_lines)
 
-def get_panel_session():
-    """Authenticates with the panel."""
-    session = requests.Session()
-    login_url = f"{PANEL_URL}/login"
-    payload = {'username': USERNAME, 'password': PASSWORD}
-    
-    try:
-        res = session.post(login_url, data=payload)
-        res.raise_for_status()
-        if res.json().get('success'):
-            print("✅ Login successful")
-            return session
-        else:
-            print(f"❌ Login failed: {res.json().get('msg')}")
-            return None
-    except Exception as e:
-        print(f"❌ Connection error: {e}")
-        return None
-
-def get_inbound_data(session):
-    """Retrieves inbound data via MHSanaei API."""
-    try:
-        res = session.get(f"{PANEL_URL}/panel/api/inbounds/list")
-        res.raise_for_status()
-        
-        data = res.json()
-        if not data.get('success'):
-            print(f"❌ API failure: {data.get('msg')}")
-            return None
-            
-        inbound_list = data.get('obj', [])
-        target = next((i for i in inbound_list if i['id'] == INBOUND_ID), None)
-        
-        if not target:
-            print(f"❌ Inbound ID {INBOUND_ID} not found")
-            return None
-            
-        return target
-    except Exception as e:
-        print(f"❌ API error: {e}")
-        return None
-
 def load_extra_servers():
-    """Loads extra servers using absolute path."""
+    """
+    Loads additional servers from the local YAML file using absolute path.
+    """
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(base_dir, 'extra_servers.yaml')
 
@@ -149,7 +110,7 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
 
     address = SERVER_HOST if SERVER_HOST else "YOUR_SERVER_IP"
 
-    # Start building dictionary (Insertion order is preserved)
+    # Start building dictionary
     proxy = {}
 
     # --- Block 1: Basic Info ---
@@ -196,11 +157,11 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
     return proxy
 
 def main():
-    # 1. Authenticate
+    # 1. Authenticate (Using imported function)
     session = get_panel_session()
     if not session: return
 
-    # 2. Get Inbound
+    # 2. Get Inbound (Using imported function)
     inbound = get_inbound_data(session)
     if not inbound: return
     
@@ -249,8 +210,6 @@ def main():
         
         # Render template
         raw_content = template.render(all_proxies=all_proxies)
-        
-        # NEW: Strip comments
         config_content = strip_comments(raw_content)
         
         filename = f"{client['email']}.yaml"
@@ -262,7 +221,7 @@ def main():
         generated_files_content[filename] = {'content': config_content}
         print(f"📄 Generated: {filename}")
 
-    # 7. Generate Index File (New functionality)
+    # 7. Generate Index File
     if generated_files_content and GITHUB_USERNAME:
         index_lines = []
         

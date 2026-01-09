@@ -1,0 +1,6 @@
+# List of domains for Reality masking (SNI)
+# Format: Simple list of domains.
+# The script will automatically set dest = domain:443
+
+- pypi.org
+- api.dropbox.com
