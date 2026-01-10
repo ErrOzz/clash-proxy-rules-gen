@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 
 # Import our internal modules
 from panel_api import get_panel_session, get_inbound_data, update_inbound
+from domain_tls_checker import check_domain_tls13  # NEW IMPORT
 import sync_configs  # Trigger Gist update
 
 # Load environment variables
@@ -97,24 +98,53 @@ def rotate():
 
     # 4. Prepare New Settings
     
-    # A. Pick new Domain
+    # A. Pick new Domain with TLS 1.3 Validation
     domains = load_rotation_domains()
     if not domains:
         print("❌ No domains loaded. Aborting.")
         return
         
     current_root = current_main_sni.replace("www.", "")
+    
+    # Filter out current domain to ensure change
     available_domains = [d for d in domains if d.replace("www.", "") != current_root]
     
     if not available_domains:
-        print("⚠️ Only current domain available. Rotating keys only.")
-        root_domain = current_main_sni or domains[0]
-    else:
-        root_domain = random.choice(available_domains)
-        root_domain = root_domain.replace("www.", "")
+        print("⚠️ No other domains available in list. Using current pool.")
+        available_domains = [d for d in domains] # fallback to all domains
+
+    # Shuffle list to pick randomly
+    random.shuffle(available_domains)
+    
+    selected_domain = None
+    
+    print("🔍 Checking domains for TLS 1.3 support...")
+    for domain in available_domains:
+        # Ensure we check the clean domain name
+        clean_domain = domain.replace("www.", "")
+        
+        # Validate!
+        if check_domain_tls13(clean_domain):
+            selected_domain = clean_domain
+            break # Found a working domain!
+        else:
+            print(f"⏩ Skipping {clean_domain} (Validation failed)")
+            
+    if not selected_domain:
+        print("❌ CRITICAL: No valid TLS 1.3 domains found in the list! Aborting rotation to preserve connectivity.")
+        return
+
+    root_domain = selected_domain
 
     # B. Generate SNI List & Dest
-    new_snis = [root_domain, f"www.{root_domain}"]
+    # We use the domain exactly as provided (validated above).
+    # If it's a subdomain (dl.google.com), we don't need 'www'.
+    new_snis = [root_domain]
+    
+    # Optional: Add 'www' ONLY if the domain looks like a root domain (has only 1 dot)
+    if root_domain.count('.') == 1:
+        new_snis.append(f"www.{root_domain}")
+        
     new_dest = f"{root_domain}:443"
 
     # C. Generate New Keys (Python + URLSafe)
@@ -123,7 +153,7 @@ def rotate():
     # D. Generate New ShortIds
     new_short_ids = generate_short_ids(4)
 
-    print(f"🆕 Selected Domain: {root_domain}")
+    print(f"✅ Selected Domain: {root_domain}")
     print(f"   Target (Dest): {new_dest}")
     print(f"   New Public Key: {new_public_key}")
 
@@ -132,7 +162,6 @@ def rotate():
     reality_settings['serverNames'] = new_snis
     reality_settings['shortIds'] = new_short_ids
     reality_settings['target'] = new_dest
-    reality_settings['dest'] = new_dest
     
     # --- KEY UPDATE FIX ---
     # Ensure 'settings' exists for publicKey

@@ -2,5 +2,45 @@
 # Format: Simple list of domains.
 # The script will automatically set dest = domain:443
 
+# Samsung Firmware Update (очень тяжелый трафик)
+- samsung-updates.com
+# Google Downloads (Android studio, Chrome, etc)
+- dl.google.com
+- update.googleapis.com
+- android.googleapis.com
+# Apple Software Updates
+- swscan.apple.com
+- appldnld.apple.com
+- updates.cdn-apple.com
+# Microsoft
+- cloud.microsoft
+- tlu.dl.delivery.mp.microsoft.com
+- officecdn.microsoft.com
+# Visual Studio Code downloads
+- update.code.visualstudio.com
+# NVIDIA Drivers download (огромный трафик)
+- international-gfe.download.nvidia.com
+# ESET Updates
+- update.eset.com
+
+# GitHub Code Load (скачивание zip-архивов репозиториев)
+- codeload.github.com
+- raw.githubusercontent.com
+# Docker Registry (скачивание образов контейнеров)
+- hub.docker.com
+- registry-1.docker.io
+
+# Python Package Index (скачивание библиотек)
 - pypi.org
+- files.pythonhosted.org
+# Dropbox API (файлы из Dropbox)
 - api.dropbox.com
+- content.dropboxapi.com
+
+# TeamViewer Router (длительные сессии)
+- router.teamviewer.com
+# Zoom (веб-клиент)
+- zoom.us
+
+# Twitch (видеопоток)
+- player.twitch.tv
