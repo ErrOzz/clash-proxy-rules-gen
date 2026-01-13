@@ -18,6 +18,7 @@ GIST_ID = os.getenv("GIST_ID")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 SERVER_HOST = os.getenv("SERVER_HOST")
 GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
+RULE_PROVIDER_URL = os.getenv("RULE_PROVIDER_URL")
 
 # --- Helper Functions ---
 
@@ -209,7 +210,10 @@ def main():
         all_proxies = [client_proxy] + extra_proxies
         
         # Render template
-        raw_content = template.render(all_proxies=all_proxies)
+        raw_content = template.render(
+            all_proxies=all_proxies,
+            rule_provider_url=RULE_PROVIDER_URL
+        )
         config_content = strip_comments(raw_content)
         
         filename = f"{client['email']}.yaml"

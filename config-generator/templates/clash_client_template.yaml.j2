@@ -4,6 +4,12 @@ mode: rule
 log-level: info
 # external-controller: 127.0.0.1:9090
 
+geodata-mode: true
+geox-url:
+  geoip: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat"
+  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb"
+
 dns:
   enable: true
   ipv6: false
@@ -65,7 +71,7 @@ rule-providers:
   proxy_domains:
     behavior: classical
     type: http
-    url: "https://raw.githubusercontent.com/ErrOzz/clash-proxy-rules-gen/refs/heads/main/clash_proxy_rules.yaml"
+    url: "{{ rule_provider_url }}"
     interval: 3600 # in seconds
     path: ./proxy_domains.yaml # Lockal rule file name
 
@@ -79,6 +85,6 @@ rules:
 
   - RULE-SET,proxy_domains,🚀 PROXY
 
-  # - GEOIP,RU,DIRECT
+  - GEOIP,RU,DIRECT
 
   - MATCH,🐟 OTHER
