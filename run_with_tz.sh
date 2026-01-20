@@ -31,3 +31,9 @@ fi
 # Run the main Python script
 echo "[$TZ] Time match: $CURRENT_DAY at $CURRENT_HOUR:XX. Starting rotation..."
 /opt/clash-proxy-rules-gen/config-generator/.venv/bin/python /opt/clash-proxy-rules-gen/config-generator/rotate_settings.py
+
+# crontab -e
+# paste the following line to schedule the script:
+# # Start check every hour in :30 minuts.
+# # The run_with_tz.sh script will decide whether something needs to be done based on the Ekb time.
+# 30 * * * * /opt/clash-proxy-rules-gen/run_with_tz.sh >> /opt/clash-proxy-rules-gen/logs/rotate.log 2>&1
