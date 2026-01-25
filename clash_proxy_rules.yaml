@@ -72,6 +72,7 @@ payload:
   - DOMAIN-SUFFIX,cheapsms.ru
   - DOMAIN-SUFFIX,cherta.media
   - DOMAIN-SUFFIX,chess.com
+  - DOMAIN-SUFFIX,chesscomfiles.com
   - DOMAIN-SUFFIX,claude.ai
   - DOMAIN-SUFFIX,cloudinary.com
   - DOMAIN-SUFFIX,cnews.fr
@@ -511,7 +512,7 @@ payload:
   - DOMAIN-SUFFIX,verbformen.ru
   - DOMAIN-SUFFIX,verstka.media
   - DOMAIN-SUFFIX,verpex.com
-  - DOMAIN-SUFFIX,vesma.today 
+  - DOMAIN-SUFFIX,vesma.today
   - DOMAIN-SUFFIX,vesma.one
   - DOMAIN-SUFFIX,vesty.co.il
   - DOMAIN-SUFFIX,vice.com
@@ -528,7 +529,7 @@ payload:
   - DOMAIN-SUFFIX,wa.me
   - DOMAIN-SUFFIX,whatsapp.com
   - DOMAIN-SUFFIX,whatsapp.net
-  - DOMAIN-SUFFIX,whatsapp.org
+  - DOMAIN-SUFFIX,whatsapp.org 
   - DOMAIN-SUFFIX,wikidot.com
   - DOMAIN-SUFFIX,willytel.de
   - DOMAIN-SUFFIX,windscribe.com
