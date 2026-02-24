@@ -4,7 +4,7 @@ payload:
   - DOMAIN-SUFFIX,10minutemail.com
   - DOMAIN-SUFFIX,10minutemail.net
   - DOMAIN-SUFFIX,15min.lt
-  - DOMAIN-SUFFIX,1lordserials.info
+  - DOMAIN-SUFFIX,1lordserials.info 
   - DOMAIN-SUFFIX,24chasa.bg
   - DOMAIN-SUFFIX,3dyuriki.com
   - DOMAIN-SUFFIX,444.hu
@@ -72,6 +72,7 @@ payload:
   - DOMAIN-SUFFIX,cheapsms.ru
   - DOMAIN-SUFFIX,cherta.media
   - DOMAIN-SUFFIX,chess.com
+  - DOMAIN-SUFFIX,chesscomfiles.com 
   - DOMAIN-SUFFIX,claude.ai
   - DOMAIN-SUFFIX,cloudinary.com
   - DOMAIN-SUFFIX,cnews.fr
@@ -200,6 +201,7 @@ payload:
   - DOMAIN-SUFFIX,gemini.google.com
   - DOMAIN-SUFFIX,news.google.com
   - DOMAIN-SUFFIX,notebooklm.google.com
+  - DOMAIN-SUFFIX,opal.google.com
   - DOMAIN-SUFFIX,play.google.com
   - DOMAIN-SUFFIX,google.dev
   - DOMAIN-SUFFIX,googleapis.com
@@ -427,7 +429,7 @@ payload:
   - DOMAIN-SUFFIX,rutrk.org
   - DOMAIN-SUFFIX,sakhalin.info
   - DOMAIN-SUFFIX,sakharovfoundation.org
-  - DOMAIN-SUFFIX,saverudata.net
+  - DOMAIN-SUFFIX,saverudata.net 
   - DOMAIN-SUFFIX,scrolller.com
   - DOMAIN-SUFFIX,semnasem.org
   - DOMAIN-SUFFIX,severreal.org
@@ -511,7 +513,7 @@ payload:
   - DOMAIN-SUFFIX,verbformen.ru
   - DOMAIN-SUFFIX,verstka.media
   - DOMAIN-SUFFIX,verpex.com
-  - DOMAIN-SUFFIX,vesma.today 
+  - DOMAIN-SUFFIX,vesma.today
   - DOMAIN-SUFFIX,vesma.one
   - DOMAIN-SUFFIX,vesty.co.il
   - DOMAIN-SUFFIX,vice.com
@@ -528,7 +530,7 @@ payload:
   - DOMAIN-SUFFIX,wa.me
   - DOMAIN-SUFFIX,whatsapp.com
   - DOMAIN-SUFFIX,whatsapp.net
-  - DOMAIN-SUFFIX,whatsapp.org
+  - DOMAIN-SUFFIX,whatsapp.org 
   - DOMAIN-SUFFIX,wikidot.com
   - DOMAIN-SUFFIX,willytel.de
   - DOMAIN-SUFFIX,windscribe.com
@@ -547,7 +549,7 @@ payload:
   - DOMAIN-SUFFIX,yummyanime.org
   - DOMAIN-SUFFIX,zahav.ru
   - DOMAIN-SUFFIX,zaodno.org
-  - DOMAIN-SUFFIX,zeflix.online 
+  - DOMAIN-SUFFIX,zeflix.online
   - DOMAIN-SUFFIX,zeit.de
   - DOMAIN-SUFFIX,zelenka.guru
   - DOMAIN-SUFFIX,zerkalo.io
