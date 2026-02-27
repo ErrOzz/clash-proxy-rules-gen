@@ -531,6 +531,8 @@ payload:
   - DOMAIN-SUFFIX,uquiz.com
   - DOMAIN-SUFFIX,usa.one
   - DOMAIN-SUFFIX,verbformen.ru
+  - DOMAIN-SUFFIX,verbformen.com
+  - DOMAIN-SUFFIX,verbformen.net
   - DOMAIN-SUFFIX,verstka.media
   - DOMAIN-SUFFIX,verpex.com
   - DOMAIN-SUFFIX,vesma.today
