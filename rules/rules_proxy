@@ -1,5 +1,4 @@
 *.ua
-1020123234wedwecwe.com # not available fake domain
 10minutemail.com
 10minutemail.net
 15min.lt
@@ -22,7 +21,6 @@ agenceurope.eu
 agents.media
 agentura.ru
 ajay.app
-akamaihd.net # not available
 amdm.ru
 amedia.vip
 amnezia.org
@@ -110,29 +108,6 @@ deutschlandradio.de
 diena.lv
 digi24.ro
 digitalocean.com
-# discord group
-dis.gd
-discord.co
-discord.com
-discord.design
-discord.dev
-discord.gg
-discord.gift
-discord.gifts
-discord.media
-discord.new
-discord.store
-discord.tools # not available
-discordapp.com
-discordapp.net # not available
-discordcdn.com
-discordmerch.com
-discordpartygames.com
-discord-activities.com # not available
-discordactivities.com
-discordsays.com
-discours.io
-# end discord group
 dnsstuff.com
 docker.com
 danbooru.donmai.us
@@ -165,8 +140,6 @@ expres.online
 expressionengine.com
 expresso.pt
 expressvpn.com
-facebook.com
-facebook.net # not available
 fanatical.com
 fapreactor.com
 faz.net
@@ -188,11 +161,6 @@ germania.one
 getoutline.org
 getsignal.news
 ggpht.com # not available
-# for copilot in vscode
-github.com
-githubcopilot.com
-githubusercontent.com # not available
-# end for copilot in vscode
 glasnaya.org
 go-to-library.sk
 godaddy.com
@@ -216,7 +184,6 @@ gvt1.com # not available google update de
 grani.ru
 graty.me
 greenmangaming.com
-grok.com
 gulag.cz
 gulagu.net
 hdrezka.ag
@@ -236,10 +203,6 @@ in-fact.org
 independent.com.mt
 independent.ie
 information.dk
-# for instagram
-cdninstagram.com # not available
-instagram.com
-# end for instagram
 intel.com
 irishtimes.com
 is.fi
@@ -281,7 +244,6 @@ libgen.li
 libgen.rs
 libgen.st
 liga.net
-linkedin.com
 linktr.ee
 livehdcams.com
 locals.md
@@ -448,14 +410,6 @@ seznamzpravy.cz
 shadowsocks.org
 shikimori.me
 sibreal.org
-# signal group
-signal.art
-signal.group
-signal.link
-signal.me
-signal.org
-signal.tube
-# end signal group
 skai.gr
 skat.media
 sketchup.com
@@ -516,8 +470,6 @@ tvmnews.mt
 tvnet.lv
 tvrain.ru
 tvrain.tv
-twimg.com # not available
-twitter.com
 unian.info
 unian.net
 upskillstutor.com
@@ -548,14 +500,10 @@ windscribe.com
 wixmp.com
 wonderzine.com
 wplocker.com
-x.ai
-x.com
 xiti.com # not available
 yande.re
 yaoilib.me
 yle.fi
-youtu.be
-youtube.com
 ytimg.com # not available
 yummyanime.org
 zahav.ru
