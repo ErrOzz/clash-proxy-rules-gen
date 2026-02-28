@@ -4,6 +4,15 @@ mode: rule
 log-level: info
 # external-controller: 127.0.0.1:9090
 
+# --- GeoX Data Sources ---
+geodata-mode: false
+geox-url:
+  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
+  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb"
+
+geo-auto-update: true
+geo-update-interval: 24 # in hours
+
 dns:
   enable: true
   ipv6: false
@@ -79,6 +88,12 @@ rules:
 
   - RULE-SET,proxy_domains,🚀 PROXY
 
- # - GEOIP,RU,DIRECT
+  - GEOSITE,telegram,🚀 PROXY
+  - GEOIP,telegram,🚀 PROXY,no-resolve
+
+  - GEOSITE,whatsapp,🚀 PROXY
+  - GEOIP,whatsapp,🚀 PROXY,no-resolve
+
+  - GEOIP,RU,DIRECT
 
   - MATCH,🐟 OTHER
