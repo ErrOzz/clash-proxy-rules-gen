@@ -65,7 +65,7 @@ proxy-groups:
       {% endfor %}
 #  
   # 3. Special Selector for AI and Developer Platforms (Optional)
-  - name: 🤖 AI & Dev
+  - name: 🤖 AI
     type: select
     proxies:
       - ♻️ Automatic
@@ -137,9 +137,9 @@ rules:
       'microsoft-copilot'
   ] %}
   {% for app in ai_dev -%}
-  - GEOSITE,{{ app }},🤖 AI & Dev
-  {% endfor -%}
-
+  - GEOSITE,{{ app }},🤖 AI
+  {% endfor %}
+#
   - GEOIP,RU,DIRECT
 
   - MATCH,🐟 OTHER
