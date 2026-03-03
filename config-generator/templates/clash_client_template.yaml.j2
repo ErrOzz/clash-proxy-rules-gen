@@ -65,7 +65,7 @@ proxy-groups:
       {% endfor %}
 #  
   # 3. Special Selector for AI and Developer Platforms (Optional)
-  - name: 🤖 AI
+  - name: 🤖 AI & Dev
     type: select
     proxies:
       - ♻️ Automatic
@@ -102,7 +102,7 @@ rules:
   # Messengers
   {%- set messengers = [
       'telegram',
-      'whatsapp'
+      'whatsapp',
       'signal',
       'discord'
   ] %}
@@ -131,11 +131,10 @@ rules:
       'xai', 
       'anthropic', 
       'github', 
-      'bing',
-      'microsoft-copilot'
+      'bing'
   ] %}
   {% for app in ai_dev -%}
-  - GEOSITE,{{ app }},🤖 AI
+  - GEOSITE,{{ app }},🤖 AI & Dev
   {% endfor %}
 #
   - GEOIP,RU,DIRECT
