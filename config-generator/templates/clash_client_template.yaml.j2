@@ -63,7 +63,18 @@ proxy-groups:
       {% for proxy in all_proxies -%}
       - {{ proxy.name }}
       {% endfor %}
-  # 3. Fallback Selector: For traffic not matched by rules (Your 'OTHER' logic)
+#  
+  # 3. Special Selector for AI and Developer Platforms (Optional)
+  - name: 🤖 AI & Dev
+    type: select
+    proxies:
+      - ♻️ Automatic
+      - 🚀 PROXY
+      {% for proxy in all_proxies -%}
+      - {{ proxy.name }}
+      {% endfor %}
+#
+  # 4. Fallback Selector: For traffic not matched by rules (Your 'OTHER' logic)
   - name: 🐟 OTHER
     type: select
     proxies:
@@ -86,31 +97,48 @@ rules:
   - DOMAIN-SUFFIX,local,DIRECT
   - DOMAIN-SUFFIX,localhost,DIRECT
 
+  - GEOSITE,category-torrent,REJECT
+
   - RULE-SET,proxy_domains,🚀 PROXY
 
-  # messaging and social media
-  - GEOSITE,telegram,🚀 PROXY
-  - GEOIP,telegram,🚀 PROXY,no-resolve
-  - GEOSITE,whatsapp,🚀 PROXY
-  - GEOIP,whatsapp,🚀 PROXY,no-resolve
-  - GEOSITE,signal,🚀 PROXY
-  - GEOIP,signal,🚀 PROXY,no-resolve
-  - GEOSITE,discord,🚀 PROXY
-  - GEOIP,discord,🚀 PROXY,no-resolve
-  
+  # Messengers
+  {%- set messengers = [
+      'telegram',
+      'whatsapp'
+      'signal',
+      'discord'
+  ] %}
+  {% for app in messengers -%}
+  - GEOSITE,{{ app }},🚀 PROXY
+  - GEOIP,{{ app }},🚀 PROXY,no-resolve
+  {% endfor -%}
+
   # social media and content platforms
-  - GEOSITE,facebook,🚀 PROXY
-  - GEOSITE,instagram,🚀 PROXY
-  - GEOSITE,linkedin,🚀 PROXY
-  - GEOSITE,twitter,🚀 PROXY
-  - GEOSITE,youtube,🚀 PROXY
+  {% set social = [
+      'facebook', 
+      'instagram', 
+      'linkedin', 
+      'twitter', 
+      'youtube',
+      'tiktok' 
+  ] %}
+  {% for app in social -%}
+  - GEOSITE,{{ app }},🚀 PROXY
+  {% endfor -%}
 
   # ai and developer platforms
-  - GEOSITE,google-gemini,🚀 PROXY
-  - GEOSITE,openai,🚀 PROXY
-  - GEOSITE,xai,🚀 PROXY
-  - GEOSITE,anthropic,🚀 PROXY
-  - GEOSITE,github,🚀 PROXY
+  {% set ai_dev = [
+      'google-gemini', 
+      'openai', 
+      'xai', 
+      'anthropic', 
+      'github', 
+      'bing',
+      'microsoft-copilot'
+  ] %}
+  {% for app in ai_dev -%}
+  - GEOSITE,{{ app }},🤖 AI & Dev
+  {% endfor -%}
 
   - GEOIP,RU,DIRECT
 
