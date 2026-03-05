@@ -97,14 +97,14 @@ rules:
   - DOMAIN-SUFFIX,local,DIRECT
   - DOMAIN-SUFFIX,localhost,DIRECT
 
-  - RULE-SET,proxy_domains,🚀 PROXY
-
   # Messengers
   {%- set messengers = [
       'telegram',
       'whatsapp',
       'signal',
-      'discord'
+      'discord',
+      'messenger',
+      'slack'
   ] %}
   {% for app in messengers -%}
   - GEOSITE,{{ app }},🚀 PROXY
@@ -118,6 +118,7 @@ rules:
       'linkedin', 
       'twitter', 
       'youtube',
+      'google-play',
       'tiktok' 
   ] %}
   {% for app in social -%}
@@ -126,17 +127,15 @@ rules:
 
   # ai and developer platforms
   {% set ai_dev = [
-      'google-gemini', 
-      'openai', 
-      'xai', 
-      'anthropic', 
-      'github', 
-      'bing'
+      'category-ai-!cn', 
+      'github'
   ] %}
   {% for app in ai_dev -%}
   - GEOSITE,{{ app }},🤖 AI & Dev
   {% endfor %}
 #
+  - RULE-SET,proxy_domains,🚀 PROXY
+
   - GEOIP,RU,DIRECT
 
   - MATCH,🐟 OTHER

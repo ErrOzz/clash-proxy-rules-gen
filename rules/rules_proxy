@@ -165,21 +165,14 @@ glasnaya.org
 go-to-library.sk
 godaddy.com
 # google services
-accounts.google.com
-apis.google.com
-aistudio.google.com
-bard.google.com
-*.clients6.google.com
-gemini.google.com
+# accounts.google.com
+# apis.google.com
+# *.clients6.google.com
 news.google.com
-notebooklm.google.com
-opal.google.com
-play.google.com
-google.dev
-googleapis.com
-googleusercontent.com
-googlevideo.com
-gvt1.com # not available google update de
+# google.dev
+# googleapis.com
+# googleusercontent.com
+# gvt1.com # not available google update de
 # end google services
 grani.ru
 graty.me
