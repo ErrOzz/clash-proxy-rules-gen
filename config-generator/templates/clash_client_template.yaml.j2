@@ -64,6 +64,13 @@ proxy-groups:
       - {{ proxy.name }}
       {% endfor %}
 #  
+  # 4. Fallback Selector: For traffic not matched by rules (Your 'OTHER' logic)
+  - name: 🐟 OTHER
+    type: select
+    proxies:
+      - DIRECT
+      - 🚀 PROXY
+
   # 3. Special Selector for AI and Developer Platforms (Optional)
   - name: 🤖 AI & Dev
     type: select
@@ -74,13 +81,6 @@ proxy-groups:
       - {{ proxy.name }}
       {% endfor %}
 #
-  # 4. Fallback Selector: For traffic not matched by rules (Your 'OTHER' logic)
-  - name: 🐟 OTHER
-    type: select
-    proxies:
-      - DIRECT
-      - 🚀 PROXY
-
 rule-providers:
   proxy_domains:
     behavior: classical
