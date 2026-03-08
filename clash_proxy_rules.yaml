@@ -163,8 +163,10 @@ payload:
   - DOMAIN-SUFFIX,glasnaya.org
   - DOMAIN-SUFFIX,go-to-library.sk
   - DOMAIN-SUFFIX,godaddy.com
+  - DOMAIN-SUFFIX,apis.google.com
+  - DOMAIN-SUFFIX,googleapis.com
   - DOMAIN-SUFFIX,news.google.com
-  - DOMAIN-SUFFIX,gvt1.com
+  - DOMAIN-SUFFIX,gvt1.com 
   - DOMAIN-SUFFIX,grani.ru
   - DOMAIN-SUFFIX,graty.me
   - DOMAIN-SUFFIX,greenmangaming.com
