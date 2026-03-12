@@ -135,7 +135,6 @@ rules:
   {% endfor %}
 
   # --- CRITICAL: GEOIP Rules for Direct IP Connections ---
-  # Only use infrastructure names that actually exist in geoip.dat
   - GEOIP,telegram,🚀 PROXY,no-resolve
   # 'facebook' covers WhatsApp, Instagram, and Messenger IPs
   - GEOIP,facebook,🚀 PROXY,no-resolve
@@ -143,6 +142,9 @@ rules:
 
   - RULE-SET,proxy_domains,🚀 PROXY
 
-#  - GEOIP,RU,DIRECT
+# --- Light Regional Rules for Russia ---
+  - DOMAIN-SUFFIX,ru,DIRECT
+  - DOMAIN-SUFFIX,su,DIRECT
+  - DOMAIN-SUFFIX,xn--p1ai,DIRECT # Zone .рф in punycode
 
   - MATCH,🐟 OTHER
