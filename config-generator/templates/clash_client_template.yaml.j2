@@ -5,10 +5,11 @@ log-level: info
 # external-controller: 127.0.0.1:9090
 
 # --- GeoX Data Sources ---
-geodata-mode: false
+geodata-mode: true
 geox-url:
-  geosite: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat"
-  mmdb: "https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country.mmdb"
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
 
 geo-auto-update: true
 geo-update-interval: 24 # in hours
@@ -108,7 +109,6 @@ rules:
   ] %}
   {% for app in messengers -%}
   - GEOSITE,{{ app }},🚀 PROXY
-  - GEOIP,{{ app }},🚀 PROXY,no-resolve
   {% endfor -%}
 
   # social media and content platforms
@@ -133,9 +133,16 @@ rules:
   {% for app in ai_dev -%}
   - GEOSITE,{{ app }},🤖 AI & Dev
   {% endfor %}
-#
+
+  # --- CRITICAL: GEOIP Rules for Direct IP Connections ---
+  # Only use infrastructure names that actually exist in geoip.dat
+  - GEOIP,telegram,🚀 PROXY,no-resolve
+  # 'facebook' covers WhatsApp, Instagram, and Messenger IPs
+  - GEOIP,facebook,🚀 PROXY,no-resolve
+  - GEOIP,twitter,🚀 PROXY,no-resolve
+
   - RULE-SET,proxy_domains,🚀 PROXY
 
-  - GEOIP,RU,DIRECT
+#  - GEOIP,RU,DIRECT
 
   - MATCH,🐟 OTHER
