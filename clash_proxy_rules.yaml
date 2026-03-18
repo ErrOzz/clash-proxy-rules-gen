@@ -165,7 +165,6 @@ payload:
   - DOMAIN-SUFFIX,go-to-library.sk
   - DOMAIN-SUFFIX,godaddy.com
   - DOMAIN-SUFFIX,apis.google.com
-  - DOMAIN-SUFFIX,colab.dev
   - DOMAIN-SUFFIX,googleapis.com
   - DOMAIN-SUFFIX,news.google.com
   - DOMAIN-SUFFIX,gvt1.com 
