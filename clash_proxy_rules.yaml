@@ -22,7 +22,7 @@ payload:
   - DOMAIN-SUFFIX,agents.media
   - DOMAIN-SUFFIX,agentura.ru
   - DOMAIN-SUFFIX,ajay.app
-  - DOMAIN-SUFFIX,akamaihd.net
+  - DOMAIN-SUFFIX,akamaihd.net 
   - DOMAIN-SUFFIX,amdm.ru
   - DOMAIN-SUFFIX,amedia.vip
   - DOMAIN-SUFFIX,amnezia.org
@@ -173,6 +173,8 @@ payload:
   - DOMAIN-SUFFIX,greenmangaming.com
   - DOMAIN-SUFFIX,gulag.cz
   - DOMAIN-SUFFIX,gulagu.net
+  - DOMAIN-SUFFIX,habr.com
+  - DOMAIN-SUFFIX,habrastorage.org
   - DOMAIN-SUFFIX,hdrezka.ag
   - DOMAIN-SUFFIX,hentai.name
   - DOMAIN-SUFFIX,hentaichan.live
@@ -482,6 +484,8 @@ payload:
   - DOMAIN-SUFFIX,willytel.de
   - DOMAIN-SUFFIX,windscribe.com
   - DOMAIN-SUFFIX,wixmp.com
+  - DOMAIN-SUFFIX,woerter.ru
+  - DOMAIN-SUFFIX,woerter.net
   - DOMAIN-SUFFIX,wonderzine.com
   - DOMAIN-SUFFIX,wplocker.com
   - DOMAIN-SUFFIX,xiti.com 
