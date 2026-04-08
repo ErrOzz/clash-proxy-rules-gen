@@ -3,11 +3,7 @@
 # The script will automatically set dest = domain:443
 
 # Samsung Firmware Update (очень тяжелый трафик)
-- samsung-updates.com
-# Google Downloads (Android studio, Chrome, etc)
-- dl.google.com
-- update.googleapis.com
-- android.googleapis.com
+- samsung-updates.com 
 # Apple Software Updates
 - swscan.apple.com
 - appldnld.apple.com
@@ -16,12 +12,19 @@
 - cloud.microsoft
 - tlu.dl.delivery.mp.microsoft.com
 - officecdn.microsoft.com
-# Visual Studio Code downloads
+# Linux & Open Source (Скачивание образов и пакетов - огромный трафик)
+- releases.ubuntu.com
+- archive.ubuntu.com
+- cdimage.debian.org
+# Developer Tools & IDE Updates (Естественный трафик для VPS)
 - update.code.visualstudio.com
+- download.jetbrains.com
+- download.mozilla.org
 # NVIDIA Drivers download (огромный трафик)
 - international-gfe.download.nvidia.com
-# ESET Updates
+# Security Updates (Частые фоновые соединения)
 - update.eset.com
+- download.bitdefender.com
 
 # GitHub Code Load (скачивание zip-архивов репозиториев)
 - codeload.github.com
@@ -42,5 +45,7 @@
 # Zoom (веб-клиент)
 - zoom.us
 
-# Twitch (видеопоток)
+# Gaming & Media Delivery (Стриминг и патчи игр)
+- download.epicgames.com
 - player.twitch.tv
+- cf-media.sndcdn.com
