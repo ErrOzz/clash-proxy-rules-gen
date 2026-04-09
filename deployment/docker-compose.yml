@@ -1,0 +1,33 @@
+services:
+  3x-ui:
+    image: ghcr.io/mhsanaei/3x-ui:latest
+    container_name: 3x-ui
+    hostname: vpn-panel
+    volumes:
+      - $PWD/db/:/etc/x-ui/
+      - $PWD/cert/:/root/cert/
+    environment:
+      XRAY_VMESS_AEAD_FORCED: "false"
+    tty: true
+    network_mode: host
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:52011"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      maintainer: "errozz"
+      service: "3x-ui"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: "true"             # удалять старые образы после обновления
+      WATCHTOWER_LABEL_ENABLE: "false"       # можно включить выборочные апдейты по label
+      WATCHTOWER_POLL_INTERVAL: "86400"      # проверка каждые 24 часа (в секундах)
+      DOCKER_API_VERSION: "1.44"
