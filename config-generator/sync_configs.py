@@ -19,6 +19,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 SERVER_HOST = os.getenv("SERVER_HOST")
 GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 RULE_PROVIDER_URL = os.getenv("RULE_PROVIDER_URL")
+TEMPLATE_NAME = os.getenv("TEMPLATE_NAME", "clash_client_template.yaml.j2")
 
 # --- Helper Functions ---
 
@@ -188,9 +189,9 @@ def main():
     env.filters['to_yaml'] = to_yaml_filter
     
     try:
-        template = env.get_template('clash_client_template.yaml.j2')
+        template = env.get_template(TEMPLATE_NAME)
     except Exception as e:
-        print(f"❌ Template error: {e}")
+        print(f"❌ Template error ({TEMPLATE_NAME}): {e}")
         return
 
     # 6. Generate & Save

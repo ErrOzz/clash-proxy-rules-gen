@@ -45,41 +45,68 @@ proxies:
   {% endfor %}
 
 proxy-groups:
-  # 1. Automatic Selection: Checks ping and selects the fastest server
-  - name: ♻️ Automatic
+  # --- 1. AUTOMATIC GROUPS (Hidden logic) ---
+  
+  # Auto: Priority to Backup servers (Panel proxy is the last resort)
+  - name: ♻️ Auto (Backup First)
+    type: fallback
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      # Iterate through extra servers first (index 1 to end)
+      {% if all_proxies|length > 1 -%}
+      {% for proxy in all_proxies[1:] -%}
+      - "{{ proxy.name }}"
+      {% endfor -%}
+      {% endif -%}
+      # Panel server goes last
+      - "{{ all_proxies[0].name }}"
+
+  # Auto: Priority to Panel server (Extra servers are backups)
+  - name: ♻️ Auto (Panel First)
     type: fallback
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
     proxies:
       {% for proxy in all_proxies -%}
-      - {{ proxy.name }}
-      {% endfor -%}
-      - DIRECT
+      - "{{ proxy.name }}"
+      {% endfor %}
 
-  # 2. Main Proxy Selector: Choose between Auto or specific server manually
+  # --- 2. MANUAL SELECTORS (UI Order) ---
+
+  # 1. Main Proxy Selector (Defaults to Backup First)
   - name: 🚀 PROXY
     type: select
     proxies:
-      - ♻️ Automatic
+      - ♻️ Auto (Backup First)
+      - ♻️ Auto (Panel First)
       {% for proxy in all_proxies -%}
-      - {{ proxy.name }}
+      - "{{ proxy.name }}"
       {% endfor %}
-#  
-  # 4. Fallback Selector: For traffic not matched by rules (Your 'OTHER' logic)
+
+  # 2. Fallback Selector (For unmatched traffic)
   - name: 🐟 OTHER
     type: select
     proxies:
       - DIRECT
       - 🚀 PROXY
 
-  # 3. Special Selector for AI and Developer Platforms (Optional)
+  # 3. YouTube Selector (Defaults to Backup First, removed redundant Auto)
+  - name: ▶️ YouTube
+    type: select
+    proxies:
+      - ♻️ Auto (Backup First)
+      {% for proxy in all_proxies -%}
+      - "{{ proxy.name }}"
+      {% endfor %}
+
+  # 4. AI & Dev Selector (Defaults to Panel First, removed redundant Auto)
   - name: 🤖 AI & Dev
     type: select
     proxies:
-      - ♻️ Automatic
-      - 🚀 PROXY
+      - ♻️ Auto (Panel First)
       {% for proxy in all_proxies -%}
-      - {{ proxy.name }}
+      - "{{ proxy.name }}"
       {% endfor %}
 #
 rule-providers:
@@ -117,13 +144,15 @@ rules:
       'instagram', 
       'linkedin', 
       'twitter', 
-      'youtube',
       'google-play',
       'tiktok' 
   ] %}
   {% for app in social -%}
   - GEOSITE,{{ app }},🚀 PROXY
   {% endfor -%}
+
+  # YouTube Routing (Goes to its specific group)
+  - GEOSITE,youtube,▶️ YouTube
 
   # ai and developer platforms
   {% set ai_dev = [
