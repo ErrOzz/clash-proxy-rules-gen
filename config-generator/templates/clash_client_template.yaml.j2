@@ -35,6 +35,17 @@ dns:
     - 8.8.8.8
     - 1.1.1.1
 
+  nameserver-policy:
+    '+.ru':
+      - https://dns.yandex.ru/dns-query
+      - 77.88.8.8
+    '+.su':
+      - https://dns.yandex.ru/dns-query
+      - 77.88.8.8
+    '+.xn--p1ai': # This is .рф
+      - https://dns.yandex.ru/dns-query
+      - 77.88.8.8
+
 proxies:
   # Iterate through all generated proxies (Panel + Extra)
   {% for proxy in all_proxies -%}
