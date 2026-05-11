@@ -5,7 +5,7 @@ log-level: info
 # external-controller: 127.0.0.1:9090
 
 # --- GeoX Data Sources ---
-geodata-mode: true
+geodata-mode: false
 geox-url:
   geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
   geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
@@ -47,78 +47,136 @@ dns:
       - 77.88.8.8
 
 proxies:
-  # Iterate through all generated proxies (Panel + Extra)
-  {% for proxy in all_proxies -%}
+  # Panel Proxy
+  - {{ panel_proxy | to_yaml | indent(4) }}
+  
+  # Single Nodes
+  {% for proxy in single_nodes -%}
   - {{ proxy | to_yaml | indent(4) }}
-  {%- if not loop.last %}
-
-  {% endif -%}
+  {% endfor %}
+  
+  # Multi Nodes
+  {% for proxy in multi_nodes -%}
+  - {{ proxy | to_yaml | indent(4) }}
   {% endfor %}
 
 proxy-groups:
-  # --- 1. AUTOMATIC GROUPS (Hidden logic) ---
-  
-  # Auto: Priority to Backup servers (Panel proxy is the last resort)
-  - name: ♻️ Auto (Backup First)
+  # --- 1. HIDDEN AUTO GROUPS (Multi-nodes Fallback) ---
+  {% if multi_nodes|length > 0 %}
+  - name: ♻️ {{ provider_multi_name }} Auto
     type: fallback
+    hidden: true
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
     proxies:
-      # Iterate through extra servers first (index 1 to end)
-      {% if all_proxies|length > 1 -%}
-      {% for proxy in all_proxies[1:] -%}
-      - "{{ proxy.name }}"
-      {% endfor -%}
-      {% endif -%}
-      # Panel server goes last
-      - "{{ all_proxies[0].name }}"
-
-  # Auto: Priority to Panel server (Extra servers are backups)
-  - name: ♻️ Auto (Panel First)
-    type: fallback
-    url: 'http://www.gstatic.com/generate_204'
-    interval: 300
-    proxies:
-      {% for proxy in all_proxies -%}
+      {% for proxy in multi_nodes -%}
       - "{{ proxy.name }}"
       {% endfor %}
+  {% endif %}
 
-  # --- 2. MANUAL SELECTORS (UI Order) ---
+  # --- 2. HIDDEN AUTO GROUPS (Cross-Subscription Fallback) ---
+  {% if single_nodes|length > 0 and multi_nodes|length > 0 %}
+  - name: ♻️ Auto ({{ provider_multi_name }} ➔ {{ provider_single_name }})
+    type: fallback
+    hidden: true
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      - 🗂️ {{ provider_multi_name }}
+      - "{{ single_nodes[0].name }}"
 
-  # 1. Main Proxy Selector (Defaults to Backup First)
+  - name: ♻️ Auto ({{ provider_single_name }} ➔ {{ provider_multi_name }})
+    type: fallback
+    hidden: true
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      - "{{ single_nodes[0].name }}"
+      - 🗂️ {{ provider_multi_name }}
+  {% endif %}
+
+  # --- 3. GLOBAL HIDDEN FALLBACKS (Panel Protection) ---
+  - name: ♻️ Auto (Backup First)
+    type: fallback
+    hidden: true
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - 🛠️ External Choice
+      {% endif %}
+      - "{{ panel_proxy.name }}"
+
+  - name: ♻️ Auto (Panel First)
+    type: fallback
+    hidden: true
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      - "{{ panel_proxy.name }}"
+      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - 🛠️ External Choice
+      {% endif %}
+
+  # --- 4. MANUAL SELECTORS (Level 1 & 2) ---
+  {% if multi_nodes|length > 0 %}
+  - name: 🗂️ {{ provider_multi_name }}
+    type: select
+    proxies:
+      - ♻️ {{ provider_multi_name }} Auto
+      {% for proxy in multi_nodes -%}
+      - "{{ proxy.name }}"
+      {% endfor %}
+  {% endif %}
+
+  {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+  - name: 🛠️ External Choice
+    type: select
+    proxies:
+      {% if single_nodes|length > 0 and multi_nodes|length > 0 %}
+      - ♻️ Auto ({{ provider_multi_name }} ➔ {{ provider_single_name }})
+      - ♻️ Auto ({{ provider_single_name }} ➔ {{ provider_multi_name }})
+      {% elif multi_nodes|length > 0 %}
+      - 🗂️ {{ provider_multi_name }}
+      {% elif single_nodes|length > 0 %}
+      - "{{ single_nodes[0].name }}"
+      {% endif %}
+  {% endif %}
+
+  # --- 5. MAIN ROUTING GROUPS (UI) ---
   - name: 🚀 PROXY
     type: select
     proxies:
       - ♻️ Auto (Backup First)
       - ♻️ Auto (Panel First)
-      {% for proxy in all_proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
+      - "{{ panel_proxy.name }}"
+      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - 🛠️ External Choice
+      {% endif %}
 
-  # 2. Fallback Selector (For unmatched traffic)
   - name: 🐟 OTHER
     type: select
     proxies:
       - DIRECT
       - 🚀 PROXY
 
-  # 3. YouTube Selector (Defaults to Backup First, removed redundant Auto)
   - name: ▶️ YouTube
     type: select
     proxies:
       - ♻️ Auto (Backup First)
-      {% for proxy in all_proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
+      - "{{ panel_proxy.name }}"
+      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - 🛠️ External Choice
+      {% endif %}
 
-  # 4. AI & Dev Selector (Defaults to Panel First, removed redundant Auto)
   - name: 🤖 AI & Dev
     type: select
     proxies:
       - ♻️ Auto (Panel First)
-      {% for proxy in all_proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
+      - "{{ panel_proxy.name }}"
+      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - 🛠️ External Choice
+      {% endif %}
 #
 rule-providers:
   proxy_domains:

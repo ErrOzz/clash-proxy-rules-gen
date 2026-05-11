@@ -14,19 +14,39 @@ INBOUND_ID = int(os.getenv("INBOUND_ID", 1))
 def get_panel_session():
     """
     Authenticates with the 3x-ui panel and returns a session object.
+    Includes debug info for 403 errors.
     """
     if not PANEL_URL or not USERNAME or not PASSWORD:
         print("❌ Error: Panel credentials (URL, USERNAME, PASSWORD) are missing in .env")
         return None
 
+    # Очищаем URL от случайных слешей на конце (чтобы не было //login)
+    base_url = PANEL_URL.rstrip('/')
+    login_url = f"{base_url}/login"
+
     session = requests.Session()
-    login_url = f"{PANEL_URL}/login"
-    payload = {'username': USERNAME, 'password': PASSWORD}
     
+    # Базовые заголовки браузера
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "X-Requested-With": "XMLHttpRequest"
+    })
+
     try:
-        res = session.post(login_url, data=payload)
-        res.raise_for_status()
+        # 1. Забираем первичные куки, если сервер их выдает до логина
+        session.get(f"{base_url}/", timeout=5)
         
+        # 2. Пытаемся залогиниться
+        payload = {'username': USERNAME, 'password': PASSWORD}
+        res = session.post(login_url, data=payload, timeout=10)
+        
+        # Если статус не 200, выводим причину, которую отдал сервер!
+        if res.status_code != 200:
+            print(f"❌ Server rejected the request with HTTP {res.status_code}")
+            print(f"🔍 Panel response body: {res.text}")
+            return None
+            
         response_json = res.json()
         if response_json.get('success'):
             print("✅ Login successful")
@@ -34,6 +54,7 @@ def get_panel_session():
         else:
             print(f"❌ Login failed: {response_json.get('msg')}")
             return None
+
     except Exception as e:
         print(f"❌ Connection error: {e}")
         return None

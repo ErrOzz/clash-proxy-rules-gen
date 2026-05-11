@@ -20,6 +20,8 @@ SERVER_HOST = os.getenv("SERVER_HOST")
 GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 RULE_PROVIDER_URL = os.getenv("RULE_PROVIDER_URL")
 TEMPLATE_NAME = os.getenv("TEMPLATE_NAME", "clash_client_template.yaml.j2")
+PROVIDER_SINGLE_NAME = os.getenv("PROVIDER_SINGLE_NAME", "Single")
+PROVIDER_MULTI_NAME = os.getenv("PROVIDER_MULTI_NAME", "Multi")
 
 # --- Helper Functions ---
 
@@ -52,21 +54,25 @@ def strip_comments(text):
 
 def load_extra_servers():
     """
-    Loads additional servers from the local YAML file using absolute path.
+    Loads extra servers from the local YAML file.
+    Now returns a dictionary with 'single_node' and 'multi_nodes' lists.
     """
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(base_dir, 'extra_servers.yaml')
 
+    # Default structure
+    empty_servers = {'single_node': [], 'multi_nodes':[]}
+
     if not os.path.exists(file_path):
-        return []
+        return empty_servers
 
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             data = yaml.safe_load(f)
-            return data if isinstance(data, list) else []
+            return data if isinstance(data, dict) else empty_servers
     except Exception as e:
         print(f"❌ Error loading extra servers: {e}")
-        return []
+        return empty_servers
 
 def update_gist(files_payload):
     """Uploads to Gist."""
@@ -176,10 +182,11 @@ def main():
     clients = general_settings.get('clients', [])
     print(f"ℹ️ Found {len(clients)} clients")
 
-    # 4. Load Extra Servers
-    extra_proxies = load_extra_servers()
-    if extra_proxies:
-        print(f"ℹ️ Loaded {len(extra_proxies)} extra servers")
+    # 4. Load Extra Servers (NEW STRUCTURE)
+    extra_servers_dict = load_extra_servers()
+    single_nodes = extra_servers_dict.get('single_node',[])
+    multi_nodes = extra_servers_dict.get('multi_nodes',[])
+    print(f"ℹ️ Loaded {len(single_nodes)} single nodes and {len(multi_nodes)} multi nodes")
 
     # 5. Setup Template
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -207,12 +214,13 @@ def main():
         if not client_proxy:
             continue
 
-        # Combine with extra servers
-        all_proxies = [client_proxy] + extra_proxies
-        
-        # Render template
+        # Render template passing separated node lists and provider names
         raw_content = template.render(
-            all_proxies=all_proxies,
+            panel_proxy=client_proxy,
+            single_nodes=single_nodes,
+            multi_nodes=multi_nodes,
+            provider_single_name=PROVIDER_SINGLE_NAME,
+            provider_multi_name=PROVIDER_MULTI_NAME,
             rule_provider_url=RULE_PROVIDER_URL
         )
         config_content = strip_comments(raw_content)

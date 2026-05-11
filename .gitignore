@@ -3,6 +3,7 @@ config-generator/.env
 
 # ignore local extra servers configuration
 config-generator/extra_servers.yaml
+config-generator/extra_servers.yaml.bak
 
 # ignore generated configuration files
 config-generator/generated_configs/
