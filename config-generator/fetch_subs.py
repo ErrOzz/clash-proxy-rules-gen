@@ -144,11 +144,15 @@ def fetch_and_parse(url, is_base64=False, prefix="Node"):
         print(f"❌ Error fetching {url}: {e}")
         return[]
     
-def main():
+def update_extra_servers():
+    """
+    Fetches external subscriptions and updates extra_servers.yaml.
+    Can be called directly or imported as a module.
+    """
     print("🔄 Fetching external subscriptions...")
     
     extra_servers = {
-        'single_node': [],
+        'single_node':[],
         'multi_nodes':[]
     }
 
@@ -180,4 +184,4 @@ def main():
         print(f"❌ Failed to save extra_servers.yaml: {e}")
 
 if __name__ == "__main__":
-    main()
+    update_extra_servers()

@@ -5,8 +5,9 @@ import requests
 from jinja2 import Environment, FileSystemLoader
 from dotenv import load_dotenv
 
-# Import API functions from our new module
+# Import API functions from our module
 from panel_api import get_panel_session, get_inbound_data
+import fetch_subs
 
 # Load environment variables
 load_dotenv()
@@ -165,6 +166,11 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
     return proxy
 
 def main():
+    #0. Update External Subscriptions
+    print("🌐 Step 0: Updating external subscriptions...")
+    fetch_subs.update_extra_servers()
+    print("-" * 30)
+
     # 1. Authenticate (Using imported function)
     session = get_panel_session()
     if not session: return
