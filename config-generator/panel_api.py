@@ -14,37 +14,71 @@ INBOUND_ID = int(os.getenv("INBOUND_ID", 1))
 def get_panel_session():
     """
     Authenticates with the 3x-ui panel and returns a session object.
-    Includes debug info for 403 errors.
+    Bypasses 3.0.0+ Gin CSRF protection.
     """
     if not PANEL_URL or not USERNAME or not PASSWORD:
         print("❌ Error: Panel credentials (URL, USERNAME, PASSWORD) are missing in .env")
         return None
 
-    # Очищаем URL от случайных слешей на конце (чтобы не было //login)
+    import re  # Импортируем модуль регулярных выражений прямо здесь для удобства
+
     base_url = PANEL_URL.rstrip('/')
     login_url = f"{base_url}/login"
 
     session = requests.Session()
     
-    # Базовые заголовки браузера
+    # 1. Базовые заголовки браузера
     session.headers.update({
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json, text/plain, */*",
-        "X-Requested-With": "XMLHttpRequest"
+        "X-Requested-With": "XMLHttpRequest",
+        "Origin": base_url,
+        "Referer": f"{base_url}/"
     })
 
+    # 2. Идем на главную страницу, чтобы получить куки и вытащить CSRF токен
     try:
-        # 1. Забираем первичные куки, если сервер их выдает до логина
-        session.get(f"{base_url}/", timeout=5)
+        res_get = session.get(f"{base_url}/", timeout=5)
+        csrf_token = None
         
-        # 2. Пытаемся залогиниться
-        payload = {'username': USERNAME, 'password': PASSWORD}
+        # Пытаемся найти токен в заголовках (на всякий случай)
+        if 'X-CSRF-Token' in res_get.headers:
+            csrf_token = res_get.headers['X-CSRF-Token']
+            
+        # Пытаемся вытащить токен из HTML-кода страницы (чаще всего он в <meta name="csrf-token">)
+        if not csrf_token:
+            match = re.search(r'name=["\']csrf-?token["\']\s+content=["\']([^"\']+)["\']', res_get.text, re.IGNORECASE)
+            if match:
+                csrf_token = match.group(1)
+            else:
+                # Альтернативный вариант - поиск в JS переменных
+                match = re.search(r'csrf-?token["\']?\s*[:=]\s*["\']([^"\']+)["\']', res_get.text, re.IGNORECASE)
+                if match:
+                    csrf_token = match.group(1)
+
+        # Если нашли токен - добавляем в заголовки
+        if csrf_token:
+            session.headers.update({"X-CSRF-Token": csrf_token})
+            print(f"✅ CSRF Token extracted: {csrf_token[:5]}...")
+        else:
+            print("⚠️ CSRF Token not found in HTML. Login might fail.")
+            
+    except Exception as e:
+        print(f"⚠️ Warning: Initial GET request failed: {e}")
+
+    # 3. Отправляем форму логина (ОБЯЗАТЕЛЬНО с twoFactorCode, как просит новая версия)
+    payload = {
+        'username': USERNAME, 
+        'password': PASSWORD,
+        'twoFactorCode': ''
+    }
+    
+    try:
+        # Отправляем именно как форму (data=payload)
         res = session.post(login_url, data=payload, timeout=10)
         
-        # Если статус не 200, выводим причину, которую отдал сервер!
         if res.status_code != 200:
             print(f"❌ Server rejected the request with HTTP {res.status_code}")
-            print(f"🔍 Panel response body: {res.text}")
             return None
             
         response_json = res.json()
