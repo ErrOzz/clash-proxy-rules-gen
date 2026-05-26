@@ -42,6 +42,7 @@ payload:
   - DOMAIN-SUFFIX,ard.de
   - DOMAIN-SUFFIX,ardaudiothek.de
   - DOMAIN-SUFFIX,ardmediathek.de
+  - DOMAIN-SUFFIX,ard-mcdn.de
   - DOMAIN-SUFFIX,arte.tv
   - DOMAIN-SUFFIX,aussiedlerbote.de
   - DOMAIN-SUFFIX,azathabar.com
@@ -77,7 +78,7 @@ payload:
   - DOMAIN-SUFFIX,codacontent.io
   - DOMAIN-SUFFIX,colta.ru
   - DOMAIN-SUFFIX,compromat.group
-  - DOMAIN-SUFFIX,compromat01.group
+  - DOMAIN-SUFFIX,compromat01.group 
   - DOMAIN-SUFFIX,coollib.net
   - DOMAIN-SUFFIX,copilot.cx
   - DOMAIN-SUFFIX,crimeahrg.org
@@ -270,7 +271,7 @@ payload:
   - DOMAIN-SUFFIX,miniplay.com
   - DOMAIN-SUFFIX,mintmanga.live
   - DOMAIN-SUFFIX,monotype.com
-  - DOMAIN-SUFFIX,moscow-post.su
+  - DOMAIN-SUFFIX,moscow-post.su 
   - DOMAIN-SUFFIX,mouser.com
   - DOMAIN-SUFFIX,mhcache.com
   - DOMAIN-SUFFIX,myheritage.com
@@ -357,7 +358,7 @@ payload:
   - DOMAIN-SUFFIX,quora.com
   - DOMAIN-SUFFIX,radiofrance.fr
   - DOMAIN-SUFFIX,radiosakharov.org
-  - DOMAIN-SUFFIX,rai.it
+  - DOMAIN-SUFFIX,rai.it 
   - DOMAIN-SUFFIX,rainews.it
   - DOMAIN-SUFFIX,realist.online
   - DOMAIN-SUFFIX,redis.io
@@ -431,7 +432,7 @@ payload:
   - DOMAIN-SUFFIX,t-ru.org 
   - DOMAIN-SUFFIX,tayga.info
   - DOMAIN-SUFFIX,te-st.org
-  - DOMAIN-SUFFIX,telegraf.by 
+  - DOMAIN-SUFFIX,telegraf.by
   - DOMAIN-SUFFIX,temp-mail.org
   - DOMAIN-SUFFIX,tempmail.plus
   - DOMAIN-SUFFIX,temporary-email.org
@@ -468,7 +469,7 @@ payload:
   - DOMAIN-SUFFIX,verbformen.net
   - DOMAIN-SUFFIX,verstka.media
   - DOMAIN-SUFFIX,verpex.com
-  - DOMAIN-SUFFIX,vesma.today
+  - DOMAIN-SUFFIX,vesma.today 
   - DOMAIN-SUFFIX,vesma.one
   - DOMAIN-SUFFIX,vesty.co.il
   - DOMAIN-SUFFIX,vice.com
