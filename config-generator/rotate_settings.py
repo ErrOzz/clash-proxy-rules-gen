@@ -83,7 +83,11 @@ def rotate():
 
     # 3. Parse current settings
     try:
-        stream_settings = json.loads(inbound['streamSettings'])
+        raw_stream_settings = inbound.get('streamSettings', {})
+        # Check if it's a string from older API version
+        was_string = isinstance(raw_stream_settings, str)
+        stream_settings = json.loads(raw_stream_settings) if was_string else raw_stream_settings
+
         if stream_settings.get('security') != 'reality':
             print("❌ Error: Inbound is not using Reality security. Aborting.")
             return
@@ -177,7 +181,12 @@ def rotate():
     
     # Pack back
     stream_settings['realitySettings'] = reality_settings
-    inbound['streamSettings'] = json.dumps(stream_settings)
+    
+    # Return to original format before sending
+    if was_string:
+        inbound['streamSettings'] = json.dumps(stream_settings)
+    else:
+        inbound['streamSettings'] = stream_settings
 
     # 6. Send Update
     print("⏳ Updating panel settings...")

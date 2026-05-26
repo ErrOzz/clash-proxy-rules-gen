@@ -98,11 +98,18 @@ def update_gist(files_payload):
 
 def parse_inbound_json(inbound):
     """
-    Simply unpacks the JSON strings from the inbound data.
+    Unpacks the settings from the inbound data.
+    Handles both string (legacy API) and dict (new API) formats.
     """
     try:
-        stream_settings = json.loads(inbound['streamSettings'])
-        settings = json.loads(inbound['settings'])
+        stream_settings = inbound.get('streamSettings', {})
+        if isinstance(stream_settings, str):
+            stream_settings = json.loads(stream_settings)
+            
+        settings = inbound.get('settings', {})
+        if isinstance(settings, str):
+            settings = json.loads(settings)
+            
         return stream_settings, settings
     except Exception as e:
         print(f"❌ JSON Parsing error: {e}")
