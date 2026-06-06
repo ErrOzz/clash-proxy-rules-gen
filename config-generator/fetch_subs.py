@@ -69,6 +69,16 @@ def parse_vless_url(url, fallback_name="Proxy"):
         'udp': True
     }
 
+    # Extract flow if present (e.g., xtls-rprx-vision)
+    if 'flow' in query:
+        proxy['flow'] = query.get('flow')[0]
+        
+    # Extract encryption if present, otherwise default to 'none' for VLESS
+    if 'encryption' in query:
+        proxy['encryption'] = query.get('encryption')[0]
+    else:
+        proxy['encryption'] = 'none'
+
     # Handle network
     network = query.get('type', ['tcp'])[0]
     proxy['network'] = network
