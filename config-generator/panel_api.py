@@ -9,6 +9,7 @@ load_dotenv()
 PANEL_URL = os.getenv("PANEL_URL", "").rstrip('/')
 API_TOKEN = os.getenv("PANEL_API_TOKEN")
 INBOUND_ID = int(os.getenv("INBOUND_ID", 1))
+SYNC_INBOUND_IDS = [int(x.strip()) for x in os.getenv("SYNC_INBOUND_IDS", str(INBOUND_ID)).split(",") if x.strip().isdigit()]
 
 def get_panel_session():
     """
@@ -54,6 +55,30 @@ def get_inbound_data(session):
     except Exception as e:
         print(f"❌ API error: {e}")
         return None
+    
+def get_inbounds_data(session):
+    """
+    Retrieves multiple inbounds data via the official REST API based on SYNC_INBOUND_IDS.
+    """
+    try:
+        res = session.get(f"{PANEL_URL}/panel/api/inbounds/list", timeout=10)
+        res.raise_for_status()
+        
+        data = res.json()
+        if not data.get('success'):
+            print(f"❌ API failure: {data.get('msg')}")
+            return []
+            
+        inbound_list = data.get('obj', [])
+        targets = [i for i in inbound_list if i['id'] in SYNC_INBOUND_IDS]
+        
+        if not targets:
+            print(f"⚠️ No inbounds found matching IDs: {SYNC_INBOUND_IDS}")
+            
+        return targets
+    except Exception as e:
+        print(f"❌ API error: {e}")
+        return []
     
 def update_inbound(session, inbound_id, inbound_data):
     """

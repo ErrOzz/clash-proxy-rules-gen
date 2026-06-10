@@ -1,0 +1,10 @@
+providers:
+  ProviderOne:
+    type: plain
+    urls:
+      - "https://example.com/raw/config1"
+      
+  ProviderTwo:
+    type: base64
+    urls:
+      - "https://example.com/sub"

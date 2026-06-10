@@ -1,5 +1,6 @@
-# ignore local environment variables file
+# ignore local environment and variables file
 config-generator/.env
+config-generator/.providers.yaml
 
 # ignore local extra servers configuration
 config-generator/extra_servers.yaml

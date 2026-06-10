@@ -47,110 +47,114 @@ dns:
       - 77.88.8.8
 
 proxies:
-  # Panel Proxy
-  - {{ panel_proxy | to_yaml | indent(4) }}
-  
-  # Single Nodes
-  {% for proxy in single_nodes -%}
+  # --- Panel Proxies ---
+  {% for proxy in panel_proxies -%}
   - {{ proxy | to_yaml | indent(4) }}
   {% endfor %}
   
-  # Multi Nodes
-  {% for proxy in multi_nodes -%}
+  # --- External Providers ---
+  {% for provider, proxies in providers.items() -%}
+  {% for proxy in proxies -%}
   - {{ proxy | to_yaml | indent(4) }}
+  {% endfor -%}
   {% endfor %}
 
 proxy-groups:
-  # --- 1. HIDDEN AUTO GROUPS (Multi-nodes Fallback) ---
-  {% if multi_nodes|length > 0 %}
-  - name: ♻️ {{ provider_multi_name }} Auto
+  # --- 1. HIDDEN AUTO GROUPS (Providers & Private) ---
+  {% for provider, proxies in providers.items() %}
+  - name: ♻️ {{ provider }} Auto
     type: fallback
     hidden: true
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
     proxies:
-      {% for proxy in multi_nodes -%}
+      {% for proxy in proxies -%}
       - "{{ proxy.name }}"
+      {% endfor %}
+  {% endfor %}
+
+  - name: ♻️ Private Auto
+    type: fallback
+    hidden: true
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      {% for proxy in panel_proxies -%}
+      - "{{ proxy.name }}"
+      {% endfor %}
+
+  {% if providers|length > 0 %}
+  - name: ♻️ External Auto
+    type: fallback
+    hidden: true
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
+    proxies:
+      {% for provider in providers.keys() -%}
+      - 🗂️ {{ provider }}
       {% endfor %}
   {% endif %}
 
-  # --- 2. HIDDEN AUTO GROUPS (Cross-Subscription Fallback) ---
-  {% if single_nodes|length > 0 and multi_nodes|length > 0 %}
-  - name: ♻️ Auto ({{ provider_multi_name }} ➔ {{ provider_single_name }})
+  # --- 2. GLOBAL HIDDEN FALLBACKS ---
+  - name: ♻️ Auto (Public First)
     type: fallback
     hidden: true
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
     proxies:
-      - 🗂️ {{ provider_multi_name }}
-      - "{{ single_nodes[0].name }}"
-
-  - name: ♻️ Auto ({{ provider_single_name }} ➔ {{ provider_multi_name }})
-    type: fallback
-    hidden: true
-    url: 'http://www.gstatic.com/generate_204'
-    interval: 300
-    proxies:
-      - "{{ single_nodes[0].name }}"
-      - 🗂️ {{ provider_multi_name }}
-  {% endif %}
-
-  # --- 3. GLOBAL HIDDEN FALLBACKS (Panel Protection) ---
-  - name: ♻️ Auto (Backup First)
-    type: fallback
-    hidden: true
-    url: 'http://www.gstatic.com/generate_204'
-    interval: 300
-    proxies:
-      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      {% if providers|length > 0 %}
       - 🛠️ External Choice
       {% endif %}
-      - "{{ panel_proxy.name }}"
+      - 🏠 Private Server
 
-  - name: ♻️ Auto (Panel First)
+  - name: ♻️ Auto (Private First)
     type: fallback
     hidden: true
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
     proxies:
-      - "{{ panel_proxy.name }}"
-      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - 🏠 Private Server
+      {% if providers|length > 0 %}
       - 🛠️ External Choice
       {% endif %}
 
-  # --- 4. MANUAL SELECTORS (Level 1 & 2) ---
-  {% if multi_nodes|length > 0 %}
-  - name: 🗂️ {{ provider_multi_name }}
+  # --- 3. MANUAL SELECTORS ---
+  - name: 🏠 Private Server
     type: select
     proxies:
-      - ♻️ {{ provider_multi_name }} Auto
-      {% for proxy in multi_nodes -%}
+      - ♻️ Private Auto
+      {% for proxy in panel_proxies -%}
       - "{{ proxy.name }}"
       {% endfor %}
-  {% endif %}
 
-  {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+  {% if providers|length > 0 %}
   - name: 🛠️ External Choice
     type: select
     proxies:
-      {% if single_nodes|length > 0 and multi_nodes|length > 0 %}
-      - ♻️ Auto ({{ provider_multi_name }} ➔ {{ provider_single_name }})
-      - ♻️ Auto ({{ provider_single_name }} ➔ {{ provider_multi_name }})
-      {% elif multi_nodes|length > 0 %}
-      - 🗂️ {{ provider_multi_name }}
-      {% elif single_nodes|length > 0 %}
-      - "{{ single_nodes[0].name }}"
-      {% endif %}
+      - ♻️ External Auto
+      {% for provider in providers.keys() -%}
+      - 🗂️ {{ provider }}
+      {% endfor %}
+
+  {% for provider, proxies in providers.items() %}
+  - name: 🗂️ {{ provider }}
+    type: select
+    proxies:
+      - ♻️ {{ provider }} Auto
+      {% for proxy in proxies -%}
+      - "{{ proxy.name }}"
+      {% endfor %}
+  {% endfor %}
   {% endif %}
 
-  # --- 5. MAIN ROUTING GROUPS (UI) ---
+  # --- 4. MAIN ROUTING GROUPS (UI) ---
   - name: 🚀 PROXY
     type: select
     proxies:
-      - ♻️ Auto (Backup First)
-      - ♻️ Auto (Panel First)
-      - "{{ panel_proxy.name }}"
-      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - ♻️ Auto (Public First)
+      - ♻️ Auto (Private First)
+      - 🏠 Private Server
+      {% if providers|length > 0 %}
       - 🛠️ External Choice
       {% endif %}
 
@@ -163,18 +167,18 @@ proxy-groups:
   - name: ▶️ YouTube
     type: select
     proxies:
-      - ♻️ Auto (Backup First)
-      - "{{ panel_proxy.name }}"
-      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - ♻️ Auto (Public First)
+      - 🏠 Private Server
+      {% if providers|length > 0 %}
       - 🛠️ External Choice
       {% endif %}
 
   - name: 🤖 AI & Dev
     type: select
     proxies:
-      - ♻️ Auto (Panel First)
-      - "{{ panel_proxy.name }}"
-      {% if single_nodes|length > 0 or multi_nodes|length > 0 %}
+      - ♻️ Auto (Private First)
+      - 🏠 Private Server
+      {% if providers|length > 0 %}
       - 🛠️ External Choice
       {% endif %}
 #

@@ -6,7 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from dotenv import load_dotenv
 
 # Import API functions from our module
-from panel_api import get_panel_session, get_inbound_data
+from panel_api import get_panel_session, get_inbound_data, get_inbounds_data
 import fetch_subs
 
 # Load environment variables
@@ -168,38 +168,61 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
     proxy['encryption'] = general_settings.get('encryption', "")
 
     # --- Block 4: Network ---
-    proxy['network'] = stream_settings.get('network', 'tcp')
+    network = stream_settings.get('network', 'tcp')
+    proxy['network'] = network
+
+    if network == 'xhttp':
+        xhttp_settings = stream_settings.get('xhttpSettings', {})
+        proxy['xhttp-opts'] = {}
+        if 'path' in xhttp_settings:
+            proxy['xhttp-opts']['path'] = xhttp_settings['path']
+        if 'host' in xhttp_settings:
+            proxy['xhttp-opts']['headers'] = {'Host': xhttp_settings['host']}
+        if 'mode' in xhttp_settings:
+            proxy['xhttp-opts']['mode'] = xhttp_settings['mode']
 
     return proxy
 
 def main():
-    #0. Update External Subscriptions
+    # 0. Update Extra Servers from Subscriptions
     print("🌐 Step 0: Updating external subscriptions...")
     fetch_subs.update_extra_servers()
     print("-" * 30)
 
-    # 1. Authenticate (Using imported function)
+    # 1. Create API Session
     session = get_panel_session()
     if not session: return
 
-    # 2. Get Inbound (Using imported function)
-    inbound = get_inbound_data(session)
-    if not inbound: return
-    
-    print(f"ℹ️ Processing inbound: {inbound['remark']} ({inbound['protocol']})")
+    # 2. Get ALL targeted inbounds
+    inbounds = get_inbounds_data(session)
+    if not inbounds: return
 
-    # 3. Parse JSON Data
-    stream_settings, general_settings = parse_inbound_json(inbound)
-    if not stream_settings: return
+    # Group proxies by client email
+    # Structure: {'email': [proxy1, proxy2]}
+    clients_proxies_map = {}
 
-    clients = general_settings.get('clients', [])
-    print(f"ℹ️ Found {len(clients)} clients")
+    # 3. Parse JSON Data for all inbounds
+    for inbound in inbounds:
+        print(f"ℹ️ Processing inbound: {inbound['remark']} ({inbound['protocol']})")
+        stream_settings, general_settings = parse_inbound_json(inbound)
+        if not stream_settings: continue
 
-    # 4. Load Extra Servers (NEW STRUCTURE)
-    extra_servers_dict = load_extra_servers()
-    single_nodes = extra_servers_dict.get('single_node',[])
-    multi_nodes = extra_servers_dict.get('multi_nodes',[])
-    print(f"ℹ️ Loaded {len(single_nodes)} single nodes and {len(multi_nodes)} multi nodes")
+        clients = general_settings.get('clients', [])
+        
+        for client in clients:
+            email = client.get('email')
+            if not email or not client.get('id'): continue
+            
+            proxy = build_client_proxy(client, inbound, stream_settings, general_settings)
+            if proxy:
+                if email not in clients_proxies_map:
+                    clients_proxies_map[email] = []
+                clients_proxies_map[email].append(proxy)
+
+    print(f"ℹ️ Found {len(clients_proxies_map)} unique clients across inbounds")
+
+    # 4. Load Extra Servers (Dynamic Dict)
+    providers_dict = load_extra_servers()
 
     # 5. Setup Template
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -219,26 +242,16 @@ def main():
     output_dir = os.path.join(base_dir, 'generated_configs')
     os.makedirs(output_dir, exist_ok=True)
     
-    for client in clients:
-        if not client.get('email') or not client.get('id'): continue
-        
-        client_proxy = build_client_proxy(client, inbound, stream_settings, general_settings)
-        
-        if not client_proxy:
-            continue
-
-        # Render template passing separated node lists and provider names
+    for email, panel_proxies in clients_proxies_map.items():
+        # Render template passing dynamic lists
         raw_content = template.render(
-            panel_proxy=client_proxy,
-            single_nodes=single_nodes,
-            multi_nodes=multi_nodes,
-            provider_single_name=PROVIDER_SINGLE_NAME,
-            provider_multi_name=PROVIDER_MULTI_NAME,
+            panel_proxies=panel_proxies,
+            providers=providers_dict,
             rule_provider_url=RULE_PROVIDER_URL
         )
         config_content = strip_comments(raw_content)
         
-        filename = f"{client['email']}.yaml"
+        filename = f"{email}.yaml"
         file_path = os.path.join(output_dir, filename)
         
         with open(file_path, 'w', encoding='utf-8') as f:
