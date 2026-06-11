@@ -168,7 +168,6 @@ payload:
   - DOMAIN-SUFFIX,apis.google.com
   - DOMAIN-SUFFIX,googleapis.com
   - DOMAIN-SUFFIX,news.google.com
-  - DOMAIN-SUFFIX,gvt1.com 
   - DOMAIN-SUFFIX,grani.ru
   - DOMAIN-SUFFIX,graty.me
   - DOMAIN-SUFFIX,greenmangaming.com
@@ -271,7 +270,7 @@ payload:
   - DOMAIN-SUFFIX,miniplay.com
   - DOMAIN-SUFFIX,mintmanga.live
   - DOMAIN-SUFFIX,monotype.com
-  - DOMAIN-SUFFIX,moscow-post.su 
+  - DOMAIN-SUFFIX,moscow-post.su
   - DOMAIN-SUFFIX,mouser.com
   - DOMAIN-SUFFIX,mhcache.com
   - DOMAIN-SUFFIX,myheritage.com
@@ -358,7 +357,7 @@ payload:
   - DOMAIN-SUFFIX,quora.com
   - DOMAIN-SUFFIX,radiofrance.fr
   - DOMAIN-SUFFIX,radiosakharov.org
-  - DOMAIN-SUFFIX,rai.it 
+  - DOMAIN-SUFFIX,rai.it
   - DOMAIN-SUFFIX,rainews.it
   - DOMAIN-SUFFIX,realist.online
   - DOMAIN-SUFFIX,redis.io
