@@ -205,7 +205,8 @@ def main():
     for inbound in inbounds:
         print(f"ℹ️ Processing inbound: {inbound['remark']} ({inbound['protocol']})")
         stream_settings, general_settings = parse_inbound_json(inbound)
-        if not stream_settings: continue
+        if not stream_settings or not general_settings: 
+            continue
 
         clients = general_settings.get('clients', [])
         
