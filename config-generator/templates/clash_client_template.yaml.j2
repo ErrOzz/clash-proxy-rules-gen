@@ -60,42 +60,7 @@ proxies:
   {% endfor %}
 
 proxy-groups:
-  # --- 1. HIDDEN AUTO GROUPS (Providers & Private) ---
-  {% for provider, proxies in providers.items() %}
-  - name: ♻️ {{ provider }} Auto
-    type: fallback
-    hidden: true
-    url: 'http://www.gstatic.com/generate_204'
-    interval: 300
-    proxies:
-      {% for proxy in proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
-  {% endfor %}
-
-  - name: ♻️ Private Auto
-    type: fallback
-    hidden: true
-    url: 'http://www.gstatic.com/generate_204'
-    interval: 300
-    proxies:
-      {% for proxy in panel_proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
-
-  {% if providers|length > 0 %}
-  - name: ♻️ External Auto
-    type: fallback
-    hidden: true
-    url: 'http://www.gstatic.com/generate_204'
-    interval: 300
-    proxies:
-      {% for provider in providers.keys() -%}
-      - 🗂️ {{ provider }}
-      {% endfor %}
-  {% endif %}
-
-  # --- 2. GLOBAL HIDDEN FALLBACKS ---
+  # --- 1. HIDDEN AUTO GROUPS (Flat Logic) ---
   - name: ♻️ Auto (Public First)
     type: fallback
     hidden: true
@@ -103,7 +68,7 @@ proxy-groups:
     interval: 300
     proxies:
       {% if providers|length > 0 %}
-      - 🛠️ External Choice
+      - 🌐 Public Providers
       {% endif %}
       - 🏠 Private Server
 
@@ -115,48 +80,19 @@ proxy-groups:
     proxies:
       - 🏠 Private Server
       {% if providers|length > 0 %}
-      - 🛠️ External Choice
+      - 🌐 Public Providers
       {% endif %}
 
-  # --- 3. MANUAL SELECTORS ---
-  - name: 🏠 Private Server
-    type: select
-    proxies:
-      - ♻️ Private Auto
-      {% for proxy in panel_proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
-
-  {% if providers|length > 0 %}
-  - name: 🛠️ External Choice
-    type: select
-    proxies:
-      - ♻️ External Auto
-      {% for provider in providers.keys() -%}
-      - 🗂️ {{ provider }}
-      {% endfor %}
-
-  {% for provider, proxies in providers.items() %}
-  - name: 🗂️ {{ provider }}
-    type: select
-    proxies:
-      - ♻️ {{ provider }} Auto
-      {% for proxy in proxies -%}
-      - "{{ proxy.name }}"
-      {% endfor %}
-  {% endfor %}
-  {% endif %}
-
-  # --- 4. MAIN ROUTING GROUPS (UI) ---
+  # --- 2. MAIN ROUTING GROUPS (Top of the UI) ---
   - name: 🚀 PROXY
     type: select
     proxies:
       - ♻️ Auto (Public First)
       - ♻️ Auto (Private First)
-      - 🏠 Private Server
       {% if providers|length > 0 %}
-      - 🛠️ External Choice
+      - 🌐 Public Providers
       {% endif %}
+      - 🏠 Private Server
 
   - name: 🐟 OTHER
     type: select
@@ -164,13 +100,24 @@ proxy-groups:
       - DIRECT
       - 🚀 PROXY
 
+  # --- 3. SPECIFIC NODE SELECTORS (Middle of the UI) ---
+  {% for provider, proxies in providers.items() %}
+  - name: 🗂️ {{ provider }}
+    type: select
+    proxies:
+      {% for proxy in proxies -%}
+      - "{{ proxy.name }}"
+      {% endfor %}
+  {% endfor %}
+
+  # --- 4. RARE SETTINGS & ROUTING (Bottom of the UI) ---
   - name: ▶️ YouTube
     type: select
     proxies:
       - ♻️ Auto (Public First)
       - 🏠 Private Server
       {% if providers|length > 0 %}
-      - 🛠️ External Choice
+      - 🌐 Public Providers
       {% endif %}
 
   - name: 🤖 AI & Dev
@@ -179,8 +126,24 @@ proxy-groups:
       - ♻️ Auto (Private First)
       - 🏠 Private Server
       {% if providers|length > 0 %}
-      - 🛠️ External Choice
+      - 🌐 Public Providers
       {% endif %}
+
+  {% if providers|length > 0 %}
+  - name: 🌐 Public Providers
+    type: select
+    proxies:
+      {% for provider in providers.keys() -%}
+      - 🗂️ {{ provider }}
+      {% endfor %}
+  {% endif %}
+
+  - name: 🏠 Private Server
+    type: select
+    proxies:
+      {% for proxy in panel_proxies -%}
+      - "{{ proxy.name }}"
+      {% endfor %}
 #
 rule-providers:
   proxy_domains:
