@@ -199,6 +199,7 @@ rules:
   {% for app in ai_dev -%}
   - GEOSITE,{{ app }},🤖 AI & Dev
   {% endfor %}
+  - DOMAIN-SUFFIX,clients6.google.com,🤖 AI & Dev
 
   # --- CRITICAL: GEOIP Rules for Direct IP Connections ---
   - GEOIP,telegram,🚀 PROXY,no-resolve
