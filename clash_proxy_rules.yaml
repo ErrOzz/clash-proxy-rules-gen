@@ -249,6 +249,7 @@ payload:
   - DOMAIN-SUFFIX,mangahub.ru
   - DOMAIN-SUFFIX,mangapoisk.com
   - DOMAIN-SUFFIX,manticgames.com
+  - DOMAIN-SUFFIX,mdr.de
   - DOMAIN-SUFFIX,mdza.io
   - DOMAIN-SUFFIX,mediapool.bg
   - DOMAIN-SUFFIX,mediazona.ca
@@ -357,7 +358,7 @@ payload:
   - DOMAIN-SUFFIX,quora.com
   - DOMAIN-SUFFIX,radiofrance.fr
   - DOMAIN-SUFFIX,radiosakharov.org
-  - DOMAIN-SUFFIX,rai.it
+  - DOMAIN-SUFFIX,rai.it 
   - DOMAIN-SUFFIX,rainews.it
   - DOMAIN-SUFFIX,realist.online
   - DOMAIN-SUFFIX,redis.io
