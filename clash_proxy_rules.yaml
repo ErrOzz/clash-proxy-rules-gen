@@ -168,6 +168,7 @@ payload:
   - DOMAIN-SUFFIX,apis.google.com
   - DOMAIN-SUFFIX,googleapis.com
   - DOMAIN-SUFFIX,news.google.com
+  - DOMAIN-SUFFIX,gvt1.com 
   - DOMAIN-SUFFIX,grani.ru
   - DOMAIN-SUFFIX,graty.me
   - DOMAIN-SUFFIX,greenmangaming.com
