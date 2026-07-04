@@ -308,6 +308,7 @@ payload:
   - DOMAIN-SUFFIX,oaiusercontent.com 
   - DOMAIN-SUFFIX,observador.pt
   - DOMAIN-SUFFIX,oculus.com
+  - DOMAIN-SUFFIX,octopart.com
   - DOMAIN-SUFFIX,odessa.online
   - DOMAIN-SUFFIX,oe24.at
   - DOMAIN-SUFFIX,oi.legal
@@ -359,7 +360,7 @@ payload:
   - DOMAIN-SUFFIX,quora.com
   - DOMAIN-SUFFIX,radiofrance.fr
   - DOMAIN-SUFFIX,radiosakharov.org
-  - DOMAIN-SUFFIX,rai.it 
+  - DOMAIN-SUFFIX,rai.it
   - DOMAIN-SUFFIX,rainews.it
   - DOMAIN-SUFFIX,realist.online
   - DOMAIN-SUFFIX,redis.io
@@ -467,7 +468,7 @@ payload:
   - DOMAIN-SUFFIX,usa.one
   - DOMAIN-SUFFIX,verbformen.ru
   - DOMAIN-SUFFIX,verbformen.com
-  - DOMAIN-SUFFIX,verbformen.net
+  - DOMAIN-SUFFIX,verbformen.net 
   - DOMAIN-SUFFIX,verstka.media
   - DOMAIN-SUFFIX,verpex.com
   - DOMAIN-SUFFIX,vesma.today 
