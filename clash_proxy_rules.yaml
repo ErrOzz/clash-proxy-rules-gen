@@ -250,6 +250,7 @@ payload:
   - DOMAIN-SUFFIX,mangahub.ru
   - DOMAIN-SUFFIX,mangapoisk.com
   - DOMAIN-SUFFIX,manticgames.com
+  - DOMAIN-SUFFIX,mdr.de
   - DOMAIN-SUFFIX,mdza.io
   - DOMAIN-SUFFIX,mediapool.bg
   - DOMAIN-SUFFIX,mediazona.ca
@@ -271,7 +272,7 @@ payload:
   - DOMAIN-SUFFIX,miniplay.com
   - DOMAIN-SUFFIX,mintmanga.live
   - DOMAIN-SUFFIX,monotype.com
-  - DOMAIN-SUFFIX,moscow-post.su 
+  - DOMAIN-SUFFIX,moscow-post.su
   - DOMAIN-SUFFIX,mouser.com
   - DOMAIN-SUFFIX,mhcache.com
   - DOMAIN-SUFFIX,myheritage.com
