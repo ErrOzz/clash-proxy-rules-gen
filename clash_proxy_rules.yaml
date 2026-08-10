@@ -73,6 +73,7 @@ payload:
   - DOMAIN-SUFFIX,cherta.media
   - DOMAIN-SUFFIX,chess.com
   - DOMAIN-SUFFIX,chesscomfiles.com 
+  - DOMAIN-SUFFIX,cludfront.net
   - DOMAIN-SUFFIX,cloudinary.com
   - DOMAIN-SUFFIX,cnews.fr
   - DOMAIN-SUFFIX,coda.io
@@ -330,7 +331,7 @@ payload:
   - DOMAIN-SUFFIX,ozi-ru.org
   - DOMAIN-SUFFIX,ozodi.org
   - DOMAIN-SUFFIX,pap.pl
-  - DOMAIN-SUFFIX,paperpaper.ru 
+  - DOMAIN-SUFFIX,paperpaper.ru
   - DOMAIN-SUFFIX,paperpaper.io
   - DOMAIN-SUFFIX,patreon.com
   - DOMAIN-SUFFIX,pcgamesn.com
@@ -418,7 +419,7 @@ payload:
   - DOMAIN-SUFFIX,spektr.press
   - DOMAIN-SUFFIX,spiegel.de
   - DOMAIN-SUFFIX,spotify.com
-  - DOMAIN-SUFFIX,sputnikipogrom.com
+  - DOMAIN-SUFFIX,sputnikipogrom.com 
   - DOMAIN-SUFFIX,stirileprotv.ro
   - DOMAIN-SUFFIX,strana.news
   - DOMAIN-SUFFIX,strana.today
@@ -500,7 +501,7 @@ payload:
   - DOMAIN-SUFFIX,yaoilib.me
   - DOMAIN-SUFFIX,yle.fi
   - DOMAIN-SUFFIX,ytimg.com 
-  - DOMAIN-SUFFIX,yummyanime.org
+  - DOMAIN-SUFFIX,yummyanime.org 
   - DOMAIN-SUFFIX,zahav.ru
   - DOMAIN-SUFFIX,zaodno.org
   - DOMAIN-SUFFIX,zeflix.online
