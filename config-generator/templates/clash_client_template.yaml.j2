@@ -23,28 +23,30 @@ dns:
   fake-ip-filter:
     - '*.lan'
     - '*.local'
-  nameserver:
-    - https://dns.google/dns-query
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.adguard-dns.com/dns-query # Блокирует рекламу
-  fallback:
-    - https://dns.quad9.net/dns-query
-    - tls://1.1.1.1:853
   use-system-hosts: true
+
   default-nameserver:
+    - 77.88.8.8
     - 8.8.8.8
-    - 1.1.1.1
 
   nameserver-policy:
     '+.ru':
-      - https://dns.yandex.ru/dns-query
       - 77.88.8.8
+      - 8.8.8.8
     '+.su':
-      - https://dns.yandex.ru/dns-query
       - 77.88.8.8
-    '+.xn--p1ai': # This is .рф
-      - https://dns.yandex.ru/dns-query
+      - 8.8.8.8
+    '+.xn--p1ai':
       - 77.88.8.8
+      - 8.8.8.8
+
+  # Main DNS for the rest of the world. 
+  # Suffix #🚀 PROXY forces these requests INSIDE the encrypted tunnel.
+  nameserver:
+    - https://dns.google/dns-query#🚀 PROXY
+    - https://cloudflare-dns.com/dns-query#🚀 PROXY
+    # Standard UDP fallback in case the proxy tunnel fails to establish
+    - 1.1.1.1
 
 proxies:
   # --- Panel Proxies ---
