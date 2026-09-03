@@ -47,6 +47,7 @@ payload:
   - DOMAIN-SUFFIX,aussiedlerbote.de
   - DOMAIN-SUFFIX,azathabar.com
   - DOMAIN-SUFFIX,b1tv.ro
+  - DOMAIN-SUFFIX,babook.org
   - DOMAIN-SUFFIX,backmarket.com
   - DOMAIN-SUFFIX,barentsobserver.co
   - DOMAIN-SUFFIX,bbc.com
@@ -73,7 +74,7 @@ payload:
   - DOMAIN-SUFFIX,cherta.media
   - DOMAIN-SUFFIX,chess.com
   - DOMAIN-SUFFIX,chesscomfiles.com 
-  - DOMAIN-SUFFIX,cloudfront.net
+  - DOMAIN-SUFFIX,cloudfront.net 
   - DOMAIN-SUFFIX,cloudinary.com
   - DOMAIN-SUFFIX,cnews.fr
   - DOMAIN-SUFFIX,coda.io
@@ -236,7 +237,7 @@ payload:
   - DOMAIN-SUFFIX,liberation.fr
   - DOMAIN-SUFFIX,libgen.is
   - DOMAIN-SUFFIX,libgen.li
-  - DOMAIN-SUFFIX,libgen.rs
+  - DOMAIN-SUFFIX,libgen.rs 
   - DOMAIN-SUFFIX,libgen.st
   - DOMAIN-SUFFIX,liga.net
   - DOMAIN-SUFFIX,linktr.ee
@@ -474,7 +475,7 @@ payload:
   - DOMAIN-SUFFIX,verbformen.net 
   - DOMAIN-SUFFIX,verstka.media
   - DOMAIN-SUFFIX,verpex.com
-  - DOMAIN-SUFFIX,vesma.today 
+  - DOMAIN-SUFFIX,vesma.today
   - DOMAIN-SUFFIX,vesma.one
   - DOMAIN-SUFFIX,vesty.co.il
   - DOMAIN-SUFFIX,vice.com
