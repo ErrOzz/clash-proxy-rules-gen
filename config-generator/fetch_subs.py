@@ -3,6 +3,7 @@ import urllib.parse
 import base64
 import requests
 import yaml
+from typing import Dict, Any
 
 def decode_base64_subs(encoded_text):
     """
@@ -47,8 +48,8 @@ def parse_vless_url(url, fallback_name="Proxy"):
     host, port = host_port.split(':', 1)
     query = urllib.parse.parse_qs(params_str)
 
-    # Base proxy configuration
-    proxy = {
+    # Base proxy configuration (Explicitly typed as Dict[str, Any] to satisfy VSCode)
+    proxy: Dict[str, Any] = {
         'name': name,
         'type': 'vless',
         'server': host,
@@ -59,7 +60,8 @@ def parse_vless_url(url, fallback_name="Proxy"):
     }
 
     if 'flow' in query:
-        proxy['flow'] = query.get('flow')[0]
+        # Use direct key access since we already checked it exists
+        proxy['flow'] = query['flow'][0]
 
     network = query.get('type', ['tcp'])[0]
     proxy['network'] = network
@@ -71,46 +73,51 @@ def parse_vless_url(url, fallback_name="Proxy"):
         proxy['skip-cert-verify'] = True
         
         if 'sni' in query:
-            proxy['servername'] = query.get('sni')[0]
+            proxy['servername'] = query['sni'][0]
             
         if 'fp' in query:
-            proxy['client-fingerprint'] = query.get('fp')[0]
+            proxy['client-fingerprint'] = query['fp'][0]
             
         if 'alpn' in query:
-            alpn_raw = query.get('alpn')[0]
+            alpn_raw = query['alpn'][0]
             proxy['alpn'] = alpn_raw.split(',') if ',' in alpn_raw else [alpn_raw]
 
     # Reality specific options
     if security == 'reality':
-        proxy['reality-opts'] = {
-            'support-x25519mlkem768': True  # Post-quantum crypto support for Xray 26.9.9+
+        reality_opts: Dict[str, Any] = {
+            'support-x25519mlkem768': True
         }
         if 'pbk' in query:
-            proxy['reality-opts']['public-key'] = query.get('pbk')[0]
+            reality_opts['public-key'] = query['pbk'][0]
         if 'sid' in query:
-            proxy['reality-opts']['short-id'] = query.get('sid')[0]
+            reality_opts['short-id'] = query['sid'][0]
+            
+        proxy['reality-opts'] = reality_opts
 
     # Transports mapping (ws, grpc, xhttp)
     if network == 'ws':
-        proxy['ws-opts'] = {}
+        ws_opts: Dict[str, Any] = {}
         if 'path' in query:
-            proxy['ws-opts']['path'] = urllib.parse.unquote(query.get('path')[0])
+            ws_opts['path'] = urllib.parse.unquote(query['path'][0])
         if 'host' in query:
-            proxy['ws-opts']['headers'] = {'Host': urllib.parse.unquote(query.get('host')[0])}
+            ws_opts['headers'] = {'Host': urllib.parse.unquote(query['host'][0])}
+        proxy['ws-opts'] = ws_opts
             
     elif network == 'grpc':
-        proxy['grpc-opts'] = {}
+        grpc_opts: Dict[str, Any] = {}
         if 'serviceName' in query:
-            proxy['grpc-opts']['grpc-service-name'] = urllib.parse.unquote(query.get('serviceName')[0])
+            grpc_opts['grpc-service-name'] = urllib.parse.unquote(query['serviceName'][0])
+        proxy['grpc-opts'] = grpc_opts
             
     elif network == 'xhttp':
-        proxy['xhttp-opts'] = {}
+        xhttp_opts: Dict[str, Any] = {}
         if 'path' in query:
-            proxy['xhttp-opts']['path'] = urllib.parse.unquote(query.get('path')[0])
+            xhttp_opts['path'] = urllib.parse.unquote(query['path'][0])
         if 'host' in query:
-            proxy['xhttp-opts']['headers'] = {'Host': urllib.parse.unquote(query.get('host')[0])}
+            xhttp_opts['headers'] = {'Host': urllib.parse.unquote(query['host'][0])}
         if 'mode' in query:
-            proxy['xhttp-opts']['mode'] = urllib.parse.unquote(query.get('mode')[0])
+            xhttp_opts['mode'] = urllib.parse.unquote(query['mode'][0])
+        proxy['xhttp-opts'] = xhttp_opts
 
     return proxy
 
