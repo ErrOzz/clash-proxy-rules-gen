@@ -82,7 +82,9 @@ def parse_vless_url(url, fallback_name="Proxy"):
 
     # Reality specific options
     if security == 'reality':
-        proxy['reality-opts'] = {}
+        proxy['reality-opts'] = {
+            'support-x25519mlkem768': True  # Post-quantum crypto support for Xray 26.9.9+
+        }
         if 'pbk' in query:
             proxy['reality-opts']['public-key'] = query.get('pbk')[0]
         if 'sid' in query:

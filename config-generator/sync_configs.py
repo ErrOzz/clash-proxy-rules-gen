@@ -161,7 +161,8 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
 
         proxy['reality-opts'] = {
             'public-key': r_settings.get('publicKey', ''),
-            'short-id': reality_settings.get('shortIds', [''])[0]
+            'short-id': reality_settings.get('shortIds', [''])[0],
+            'support-x25519mlkem768': True  # Post-quantum crypto support for Xray 26.9.9+
         }
 
     # --- Block 3: Encryption ---
