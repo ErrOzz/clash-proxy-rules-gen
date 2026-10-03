@@ -193,26 +193,12 @@ def update_extra_servers():
             extra_servers[provider_name] = provider_proxies
             print(f"✅ Loaded {len(provider_proxies)} nodes for {provider_name}.")
 
-    existing_servers = {}
-    if os.path.exists(output_file):
-        try:
-            with open(output_file, 'r', encoding='utf-8') as f:
-                existing_servers = yaml.safe_load(f) or {}
-        except Exception:
-            pass
-
-    if extra_servers == existing_servers:
-        print("⏸️ No changes detected in external subscriptions.")
-        return False
-
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             yaml.dump(extra_servers, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
-        print("✅ extra_servers.yaml updated successfully. Changes detected!")
-        return True
+        print("✅ extra_servers.yaml updated successfully.")
     except Exception as e:
         print(f"❌ Failed to save extra_servers.yaml: {e}")
-        return False
 
 if __name__ == "__main__":
     update_extra_servers()
