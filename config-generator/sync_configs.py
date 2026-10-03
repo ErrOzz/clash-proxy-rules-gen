@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import yaml
 import requests
@@ -184,12 +185,16 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
 
     return proxy
 
-def main():
+def main(force_sync=False):
     # 0. Update Extra Servers from Subscriptions
     print("🌐 Step 0: Updating external subscriptions...")
-    fetch_subs.update_extra_servers()
+    has_changes = fetch_subs.update_extra_servers()
     print("-" * 30)
 
+    if not has_changes and not force_sync:
+        print("✅ No changes in external providers and no force flag. Skipping sync.")
+        return
+        
     # 1. Create API Session
     session = get_panel_session()
     if not session: return
@@ -288,4 +293,6 @@ def main():
         print("⚠️ No configs generated")
 
 if __name__ == "__main__":
-    main()
+    # If the user passes --force, we force sync even if no changes detected
+    is_forced = '--force' in sys.argv
+    main(force_sync=is_forced)
