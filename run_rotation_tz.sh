@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 1. Seting the timezone to Yekaterinburg
+# 1. Setting the timezone to Yekaterinburg
 export TZ="Asia/Yekaterinburg"
 TARGET_HOUR="04"
 TARGET_DAY="01"  # Set the target day of the month
@@ -20,11 +20,17 @@ if [ "$CURRENT_DAY" != "$TARGET_DAY" ]; then
 fi
 
 # 5. If we are here — stars have aligned. Start the rotation!
+echo "================================================="
+echo "📅 Date: $(date +'%Y-%m-%d %H:%M:%S')"
 echo "[$TZ] Time match: Day $CURRENT_DAY at $CURRENT_HOUR:XX. Starting rotation..."
+
 /opt/clash-proxy-rules-gen/config-generator/.venv/bin/python /opt/clash-proxy-rules-gen/config-generator/rotate_settings.py
+
+echo "✅ Rotation finished."
+echo ""
 
 # crontab -e
 # paste the following line to schedule the script:
 # # Start check every hour in :30 minuts.
-# # The run_with_tz.sh script will decide whether something needs to be done based on the Ekb time.
-# 30 * * * * /opt/clash-proxy-rules-gen/run_with_tz.sh >> /opt/clash-proxy-rules-gen/logs/rotate.log 2>&1
+# # The run_rotation_tz.sh script will decide whether something needs to be done based on the Ekb time.
+# 30 * * * * /opt/clash-proxy-rules-gen/run_rotation_tz.sh >> /opt/clash-proxy-rules-gen/logs/rotate.log 2>&1
