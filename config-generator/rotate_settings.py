@@ -195,7 +195,7 @@ def rotate():
     if success:
         print("✅ Rotation successful!")
         print("🚀 Triggering config sync...")
-        sync_configs.main()
+        sync_configs.main(force_sync=True)  # Force sync to update Gist immediately
     else:
         print("❌ Rotation failed.")
 
