@@ -204,18 +204,41 @@ def update_extra_servers():
             pass
 
     def get_hashable_state(servers_dict):
-        """Normalizes the servers dictionary for comparison, ignoring order, names, and SNI."""
+        """
+        Normalizes the dictionary for fair comparison:
+        - Removes proxy names.
+        - Strips the first subdomain part from SNI (servername).
+        - Removes short-id from reality-opts.
+        """
         state = {}
         for provider, proxies in servers_dict.items():
             cleaned_proxies = []
             for p in proxies:
                 p_copy = p.copy()
+                
+                # 1. Remove the dynamic name
                 p_copy.pop('name', None)
-                p_copy.pop('servername', None)
-
-                # Convert to string with strict key sorting
+                
+                # 2. Normalize SNI (Strip the 3rd-level domain prefix)
+                servername = p_copy.get('servername')
+                if servername and isinstance(servername, str):
+                    parts = servername.split('.')
+                    # If it has more than 2 parts and is not an IPv4 address
+                    if len(parts) > 2 and not all(part.isdigit() for part in parts):
+                        # keep everything except the first part (e.g., changed.example.com -> example.com)
+                        p_copy['servername'] = '.'.join(parts[1:])
+                        
+                # 3. Remove dynamic short-id from reality settings
+                if 'reality-opts' in p_copy and isinstance(p_copy['reality-opts'], dict):
+                    # Shallow copy to avoid mutating the original dictionary in extra_servers
+                    opts_copy = p_copy['reality-opts'].copy()
+                    opts_copy.pop('short-id', None)
+                    p_copy['reality-opts'] = opts_copy
+                
+                # Convert to string with sorted keys for consistent hashing
                 cleaned_proxies.append(json.dumps(p_copy, sort_keys=True))
-            # Sort the list itself to ignore shuffling of servers
+                
+            # Sort the entire list to ignore server shuffling by the provider
             state[provider] = sorted(cleaned_proxies)
         return state
 
