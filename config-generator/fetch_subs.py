@@ -3,6 +3,7 @@ import urllib.parse
 import base64
 import requests
 import yaml
+import json
 from typing import Dict, Any
 
 def decode_base64_subs(encoded_text):
@@ -193,6 +194,7 @@ def update_extra_servers():
             extra_servers[provider_name] = provider_proxies
             print(f"✅ Loaded {len(provider_proxies)} nodes for {provider_name}.")
 
+# Smart comparison to avoid unnecessary writes
     existing_servers = {}
     if os.path.exists(output_file):
         try:
@@ -201,8 +203,25 @@ def update_extra_servers():
         except Exception:
             pass
 
-    if extra_servers == existing_servers:
-        print("⏸️ No changes detected in external subscriptions.")
+    def get_hashable_state(servers_dict):
+        """Normalizes the servers dictionary for comparison, ignoring order, names, and SNI."""
+        state = {}
+        for provider, proxies in servers_dict.items():
+            cleaned_proxies = []
+            for p in proxies:
+                p_copy = p.copy()
+                p_copy.pop('name', None)
+                p_copy.pop('servername', None)
+
+                # Convert to string with strict key sorting
+                cleaned_proxies.append(json.dumps(p_copy, sort_keys=True))
+            # Sort the list itself to ignore shuffling of servers
+            state[provider] = sorted(cleaned_proxies)
+        return state
+
+    # Compare the normalized states
+    if get_hashable_state(extra_servers) == get_hashable_state(existing_servers):
+        print("⏸️ No technical changes detected (ignoring order, names, and SNI).")
         return False
 
     try:
