@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 # Import API functions from our module
 from panel_api import get_panel_session, get_inbound_data, get_inbounds_data
 import fetch_subs
+from logger import log
 
 # Load environment variables
 load_dotenv()
@@ -184,38 +185,38 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
             proxy['xhttp-opts']['mode'] = xhttp_settings['mode']
 
     return proxy
-
+    
 def main(force_sync=False):
     # 0. Update Extra Servers from Subscriptions
-    print("🌐 Step 0: Updating external subscriptions...")
     has_changes = fetch_subs.update_extra_servers()
-    print("-" * 30)
 
     if not has_changes and not force_sync:
-        print("✅ No changes in external providers and no force flag. Skipping sync.")
+        log("⏸️ No technical changes in external providers. Skipped.")
         return
-        
+    
     # 1. Create API Session
+    log("🔄 Sync started. Processing configurations...")
+
     session = get_panel_session()
-    if not session: return
+    if not session: 
+        log("❌ Failed to authenticate with panel.")
+        return
 
     # 2. Get ALL targeted inbounds
     inbounds = get_inbounds_data(session)
-    if not inbounds: return
+    if not inbounds: 
+        log("❌ No target inbounds found in panel.")
+        return
 
-    # Group proxies by client email
-    # Structure: {'email': [proxy1, proxy2]}
     clients_proxies_map = {}
 
     # 3. Parse JSON Data for all inbounds
     for inbound in inbounds:
-        print(f"ℹ️ Processing inbound: {inbound['remark']} ({inbound['protocol']})")
         stream_settings, general_settings = parse_inbound_json(inbound)
         if not stream_settings or not general_settings: 
             continue
 
         clients = general_settings.get('clients', [])
-        
         for client in clients:
             email = client.get('email')
             if not email or not client.get('id'): continue
@@ -225,8 +226,6 @@ def main(force_sync=False):
                 if email not in clients_proxies_map:
                     clients_proxies_map[email] = []
                 clients_proxies_map[email].append(proxy)
-
-    print(f"ℹ️ Found {len(clients_proxies_map)} unique clients across inbounds")
 
     # 4. Load Extra Servers (Dynamic Dict)
     providers_dict = load_extra_servers()
@@ -265,7 +264,6 @@ def main(force_sync=False):
             f.write(config_content)
             
         generated_files_content[filename] = {'content': config_content}
-        print(f"📄 Generated: {filename}")
 
     # 7. Generate Index File
     if generated_files_content and GITHUB_USERNAME:
@@ -284,13 +282,13 @@ def main(force_sync=False):
 
         index_filename = "0 Clash client config files.txt"
         generated_files_content[index_filename] = {'content': '\n'.join(index_lines)}
-        print(f"📑 Index file generated: {index_filename}")
 
     # 8. Upload
     if generated_files_content:
         update_gist(generated_files_content)
+        log(f"✅ Sync complete! Uploaded {len(generated_files_content)} configurations.")
     else:
-        print("⚠️ No configs generated")
+        log("⚠️ No configs generated")
 
 if __name__ == "__main__":
     # If the user passes --force, we force sync even if no changes detected

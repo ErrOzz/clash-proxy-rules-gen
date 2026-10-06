@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 # Import our internal modules
 from panel_api import get_panel_session, get_inbound_data, update_inbound
 from domain_tls_checker import check_domain_tls13  # NEW IMPORT
+from logger import log  # Use our custom logger
 import sync_configs  # Trigger Gist update
+
 
 # Load environment variables
 load_dotenv()
@@ -62,14 +64,14 @@ def load_rotation_domains():
     file_path = os.path.join(base_dir, 'rotation_domains.yaml')
     
     if not os.path.exists(file_path):
-        print("❌ rotation_domains.yaml not found!")
+        log("❌ rotation_domains.yaml not found!")
         return []
         
     with open(file_path, 'r', encoding='utf-8') as f:
         return yaml.safe_load(f)
 
 def rotate():
-    print("🔄 Starting Reality rotation process...")
+    log("🔄 Starting Reality rotation process...")
 
     # 1. Authenticate
     session = get_panel_session()
@@ -79,7 +81,7 @@ def rotate():
     inbound = get_inbound_data(session)
     if not inbound: return
     
-    print(f"ℹ️ Target Inbound: {inbound['remark']}")
+    log(f"ℹ️ Target Inbound: {inbound['remark']}")
 
     # 3. Parse current settings
     try:
@@ -89,7 +91,7 @@ def rotate():
         stream_settings = json.loads(raw_stream_settings) if was_string else raw_stream_settings
 
         if stream_settings.get('security') != 'reality':
-            print("❌ Error: Inbound is not using Reality security. Aborting.")
+            log("❌ Error: Inbound is not using Reality security. Aborting.")
             return
             
         reality_settings = stream_settings.get('realitySettings', {})
@@ -97,7 +99,7 @@ def rotate():
         current_main_sni = current_snis[0] if current_snis else ""
         
     except Exception as e:
-        print(f"❌ Error parsing current settings: {e}")
+        log(f"❌ Error parsing current settings: {e}")
         return
 
     # 4. Prepare New Settings
@@ -105,7 +107,7 @@ def rotate():
     # A. Pick new Domain with TLS 1.3 Validation
     domains = load_rotation_domains()
     if not domains:
-        print("❌ No domains loaded. Aborting.")
+        log("❌ No domains loaded. Aborting.")
         return
         
     current_root = current_main_sni.replace("www.", "")
@@ -114,7 +116,7 @@ def rotate():
     available_domains = [d for d in domains if d.replace("www.", "") != current_root]
     
     if not available_domains:
-        print("⚠️ No other domains available in list. Using current pool.")
+        log("⚠️ No other domains available in list. Using current pool.")
         available_domains = [d for d in domains] # fallback to all domains
 
     # Shuffle list to pick randomly
@@ -122,7 +124,7 @@ def rotate():
     
     selected_domain = None
     
-    print("🔍 Checking domains for TLS 1.3 support...")
+    log("🔍 Checking domains for TLS 1.3 support...")
     for domain in available_domains:
         # Ensure we check the clean domain name
         clean_domain = domain.replace("www.", "")
@@ -132,10 +134,10 @@ def rotate():
             selected_domain = clean_domain
             break # Found a working domain!
         else:
-            print(f"⏩ Skipping {clean_domain} (Validation failed)")
+            log(f"⏩ Skipping {clean_domain} (Validation failed)")
             
     if not selected_domain:
-        print("❌ CRITICAL: No valid TLS 1.3 domains found in the list! Aborting rotation to preserve connectivity.")
+        log("❌ CRITICAL: No valid TLS 1.3 domains found in the list! Aborting rotation to preserve connectivity.")
         return
 
     root_domain = selected_domain
@@ -157,9 +159,9 @@ def rotate():
     # D. Generate New ShortIds
     new_short_ids = generate_short_ids(4)
 
-    print(f"✅ Selected Domain: {root_domain}")
-    print(f"   Target (Dest): {new_dest}")
-    print(f"   New Public Key: {new_public_key}")
+    log(f"✅ Selected Domain: {root_domain}")
+    log(f"   Target (Dest): {new_dest}")
+    log(f"   New Public Key: {new_public_key}")
 
     # 5. Modify Inbound Object
     
@@ -189,15 +191,15 @@ def rotate():
         inbound['streamSettings'] = stream_settings
 
     # 6. Send Update
-    print("⏳ Updating panel settings...")
+    log("⏳ Updating panel settings...")
     success = update_inbound(session, INBOUND_ID, inbound)
     
     if success:
-        print("✅ Rotation successful!")
-        print("🚀 Triggering config sync...")
+        log("✅ Rotation successful!")
+        log("🚀 Triggering config sync...")
         sync_configs.main(force_sync=True)  # Force sync to update Gist immediately
     else:
-        print("❌ Rotation failed.")
+        log("❌ Rotation failed.")
 
 if __name__ == "__main__":
     rotate()

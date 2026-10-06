@@ -5,6 +5,7 @@ import requests
 import yaml
 import json
 from typing import Dict, Any
+from logger import log
 
 def decode_base64_subs(encoded_text):
     """
@@ -154,23 +155,30 @@ def fetch_and_parse(url, is_base64=False, prefix="Node"):
                 
         return proxies
     except Exception as e:
-        print(f"❌ Error fetching {url}: {e}")
+        log(f"⚠️ Error fetching {url}: {e}")
         return []
 
 def update_extra_servers():
     """
-    Reads providers.yaml, fetches all subscriptions dynamically, 
-    and saves them to extra_servers.yaml grouped by provider.
+    Reads providers.yaml, fetches all subscriptions dynamically.
+    If a provider fails, falls back to existing nodes.
+    Saves to extra_servers.yaml only if there are technical changes.
     """
-    print("🔄 Fetching external subscriptions from providers.yaml...")
-    
     base_dir = os.path.dirname(os.path.abspath(__file__))
     providers_file = os.path.join(base_dir, '.providers.yaml')
     output_file = os.path.join(base_dir, 'extra_servers.yaml')
 
     if not os.path.exists(providers_file):
-        print("⚠️ providers.yaml not found. Skipping external subs.")
-        return
+        return False
+
+    # 1. Load existing extra_servers.yaml if it exists for fallback purposes
+    existing_servers = {}
+    if os.path.exists(output_file):
+        try:
+            with open(output_file, 'r', encoding='utf-8') as f:
+                existing_servers = yaml.safe_load(f) or {}
+        except Exception:
+            pass
 
     with open(providers_file, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
@@ -181,79 +189,51 @@ def update_extra_servers():
     for provider_name, settings in providers_config.items():
         is_base64 = settings.get('type') == 'base64'
         urls = settings.get('urls', [])
-        
         provider_proxies = []
-        print(f"📥 Fetching nodes for provider: {provider_name}...")
         
         for url in urls:
             nodes = fetch_and_parse(url, is_base64=is_base64, prefix=provider_name)
             if nodes:
                 provider_proxies.extend(nodes)
                 
+        # 2. Fallback logic: if nothing was downloaded, use existing nodes
         if provider_proxies:
             extra_servers[provider_name] = provider_proxies
-            print(f"✅ Loaded {len(provider_proxies)} nodes for {provider_name}.")
+        else:
+            if provider_name in existing_servers:
+                extra_servers[provider_name] = existing_servers[provider_name]
+                log(f"⚠️ Provider [{provider_name}] fetch failed. Using previous nodes.")
 
-# Smart comparison to avoid unnecessary writes
-    existing_servers = {}
-    if os.path.exists(output_file):
-        try:
-            with open(output_file, 'r', encoding='utf-8') as f:
-                existing_servers = yaml.safe_load(f) or {}
-        except Exception:
-            pass
-
+    # 3. Smart comparison
     def get_hashable_state(servers_dict):
-        """
-        Normalizes the dictionary for fair comparison:
-        - Removes proxy names.
-        - Strips the first subdomain part from SNI (servername).
-        - Removes short-id from reality-opts.
-        """
         state = {}
         for provider, proxies in servers_dict.items():
             cleaned_proxies = []
             for p in proxies:
                 p_copy = p.copy()
-                
-                # 1. Remove the dynamic name
                 p_copy.pop('name', None)
-                
-                # 2. Normalize SNI (Strip the 3rd-level domain prefix)
                 servername = p_copy.get('servername')
                 if servername and isinstance(servername, str):
                     parts = servername.split('.')
-                    # If it has more than 2 parts and is not an IPv4 address
                     if len(parts) > 2 and not all(part.isdigit() for part in parts):
-                        # keep everything except the first part (e.g., changed.example.com -> example.com)
                         p_copy['servername'] = '.'.join(parts[1:])
-                        
-                # 3. Remove dynamic short-id from reality settings
                 if 'reality-opts' in p_copy and isinstance(p_copy['reality-opts'], dict):
-                    # Shallow copy to avoid mutating the original dictionary in extra_servers
                     opts_copy = p_copy['reality-opts'].copy()
                     opts_copy.pop('short-id', None)
                     p_copy['reality-opts'] = opts_copy
-                
-                # Convert to string with sorted keys for consistent hashing
                 cleaned_proxies.append(json.dumps(p_copy, sort_keys=True))
-                
-            # Sort the entire list to ignore server shuffling by the provider
             state[provider] = sorted(cleaned_proxies)
         return state
 
-    # Compare the normalized states
     if get_hashable_state(extra_servers) == get_hashable_state(existing_servers):
-        print("⏸️ No technical changes detected (ignoring order, names, and SNI).")
         return False
 
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             yaml.dump(extra_servers, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
-        print("✅ extra_servers.yaml updated successfully. Changes detected!")
         return True
     except Exception as e:
-        print(f"❌ Failed to save extra_servers.yaml: {e}")
+        log(f"❌ Failed to save extra_servers.yaml: {e}")
         return False
 
 if __name__ == "__main__":
