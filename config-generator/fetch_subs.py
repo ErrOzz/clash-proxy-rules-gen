@@ -158,7 +158,7 @@ def fetch_and_parse(url, is_base64=False, prefix="Node"):
         log(f"⚠️ Error fetching {url}: {e}")
         return []
 
-def update_extra_servers():
+def update_extra_servers(verbose=False):
     """
     Reads providers.yaml, fetches all subscriptions dynamically.
     If a provider fails, falls back to existing nodes.
@@ -199,6 +199,8 @@ def update_extra_servers():
         # 2. Fallback logic: if nothing was downloaded, use existing nodes
         if provider_proxies:
             extra_servers[provider_name] = provider_proxies
+            if verbose:
+                log(f"✅ Loaded {len(provider_proxies)} nodes for [{provider_name}].")
         else:
             if provider_name in existing_servers:
                 extra_servers[provider_name] = existing_servers[provider_name]

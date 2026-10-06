@@ -188,7 +188,7 @@ def build_client_proxy(client, inbound, stream_settings, general_settings):
     
 def main(force_sync=False):
     # 0. Update Extra Servers from Subscriptions
-    has_changes = fetch_subs.update_extra_servers()
+    has_changes = fetch_subs.update_extra_servers(verbose=force_sync)
 
     if not has_changes and not force_sync:
         log("⏸️ No technical changes in external providers. Skipped.")
